@@ -1,0 +1,24 @@
+{
+    "images": {
+        "dir": "/uploads/"
+    },
+
+    "server": {
+        "port":         3000,
+        "siteUrl":      "http://localhost:3000"
+    },
+    "dbMongo": {
+        "dbhost":       "mongodb://localhost",
+        "dbname":       "mydb",
+        "url":          "mongodb://localhost/mydb"
+    },
+    "fb": {
+        "appId": "  269877843120333",
+        "appSecret": "fc17812cc0b612569bc7cd664d480fab",
+        "callbackURL": "http://www.yeto.to:3000/auth/facebook/callback/"
+    },
+
+    "defaults": {
+        "calendarPicture": "/img/photo.jpg"
+    }
+}

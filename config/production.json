@@ -1,0 +1,16 @@
+{
+    "server": {
+        "port":        	80,
+        "siteUrl":      ""
+    },
+    "dbMongo": {
+        "dbhost":       "mongodb://nodejitsu:5f61b7131952e38a12f93ca1218b1087@flame.mongohq.com:27051",
+        "dbname":       "nodejitsudb717753927883",
+        "url":        "mongodb://nodejitsu:5f61b7131952e38a12f93ca1218b1087@flame.mongohq.com:27051/nodejitsudb717753927883"
+    },
+    "fb": {
+        "appId": "376515645741907",
+        "appSecret": "9808d624bc16b263da5d67f09b29c563",
+        "callbackURL": "http://www.yetoto.nodejitsu.com/auth/facebook/callback/"
+    }
+}

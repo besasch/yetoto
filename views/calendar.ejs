@@ -1,0 +1,111 @@
+<div class="well row">
+
+    <h1><%= calendar.title %></h1>
+    <p>Creation: <span class="datetime"><%= created %></span></p>
+    <p>Modification: <span class="datetime"><%= modified %></span></p>
+    <p>Description: <%= calendar.description %></p>
+    <p>Owner: <%= calendar.owner.firstname %> <%= calendar.owner.lastname %></p>
+
+</div>
+
+
+<div class="row" style="margin-bottom: 20px;">
+    <h4>Events</h4>
+    <ul class="unstyled">
+        
+        <% for (var i=0; i < calendar.events.length; i++) { %>
+
+
+            <div class="event">
+                
+                <a href="/events/<%= calendar.events[i]._id %>"><span class="fulllink"></span></a>
+                    
+                <img src="<%= calendar.picture %>">
+
+
+                <span class="time"><%= calendar.events[i].startTime %></span>
+
+                
+
+                <div class="controls">
+                    <form id="eventDeleteForm<%= i %>" method="post" action="/calendars/<%= calendar._id %>/events/<%= calendar.events[i]._id %>">  
+                        <input type="hidden" name="_method" value="delete" />
+                        <a href="javascript: submitEventDeleteForm()">delete</a>
+                    </form>
+                    <script type="text/javascript">
+                        function submitEventDeleteForm()
+                        {
+                            $(document).ready(function(){
+                                $("form#eventDeleteForm<%= i %>").submit();
+                            })
+                        };
+                    </script>
+                    
+                </div>
+
+
+
+                <div class="headline">
+
+                    <h3><%= calendar.events[i].title %></h3>
+
+                </div>
+            </div>
+            
+
+        <% } %>
+
+
+
+
+    </ul>
+</div>
+
+
+<div class="well row">
+
+    <form action="/calendars/<%= calendar._id %>/events" method="post" class="form-horizontal">
+
+        <fieldset>
+            <legend>Add Event</legend>
+
+                <div class="control-group">
+                    <label class="control-label" for="title">Title</label>
+                    <div class="controls">
+                        <input type="text" class="input-xlarge" name="title" id="title" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="body">Body</label>
+                    <div class="controls">
+                        <textarea type="text" class="input-xlarge" name="body" id="body"></textarea>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="startdate"> From: </label>
+                    <div class="controls">
+                        <input data-datepicker="datepicker" type="text" class="input-small" name="startdate" id="startdate" placeholder="Date"/>
+                        <input type="text" class="input-small" name="starttime" id="starttime" placeholder="Time"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="enddate"> Until: </label>
+                    <div class="controls">   
+                        <input data-datepicker="datepicker" type="text" class="input-small"  name="enddate" id="enddate" placeholder="Date"/>
+                        <input type="text" class="input-small"  name="endtime" id="endtime" placeholder="Time"/>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="location">Location</label>
+                    <div class="controls">
+                        <input type="text" class="input-xlarge" name="location" id="location"/>
+                    </div>
+                </div>
+            <input type="submit" value="Submit" class="btn btn-info"/>
+        </fieldset>
+	</form>
+</div>
+
+<a href="">back..</a>
+
