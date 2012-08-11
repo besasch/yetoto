@@ -32,17 +32,11 @@ module.exports = function(app){
         } else {
 
             Calendar.find({}, function(err, docs){
-
-                Event.atSingleDay(year, month, day, function(err, eventdocs){
                     
-                    res.render('dayview.ejs', {
-                        calendars: docs || [] ,
-                        events : eventdocs || [] ,
-                        title : moment(day + '.' + month + '.' + year, "DD.MM.YYYY").format("DD.MM.YYYY"),
-                        nextDayUrl : "/day/" + moment([year, month-1, day]).add('d', 1).format("YYYY/MM/DD"),
-                        daybeforeUrl : "/day/" + moment([year, month-1, day]).subtract('d', 1).format("YYYY/MM/DD"),
-                        user: req.user
-                    });
+                res.render('dayview.ejs', {
+                    calendars: docs || [] ,
+                    title : moment(day + '.' + month + '.' + year, "DD.MM.YYYY").format("DD.MM.YYYY"),
+                    user: req.user
                 });
             });
         }
@@ -61,7 +55,7 @@ module.exports = function(app){
 
         } else {
 
-            Event.atSingleDay(year, month, day, function(err, eventdocs){
+            Event.atSingleDay([year, month, day], function(err, eventdocs){
                 
                 var outputObj =
                 {

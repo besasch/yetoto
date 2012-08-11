@@ -34,7 +34,7 @@ module.exports = function(app){
             Calendar.findById(req.params.id)
             .populate('events')
             .populate('owner')
-            .run(function(err, doc){
+            .exec(function(err, doc){
 
                 res.render('calendar.ejs', {
                     calendars: docs || [],

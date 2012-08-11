@@ -17,17 +17,16 @@ var EventSchema = new Schema({
     owner: { type: Schema.ObjectId, ref: 'user' }
 });
 
-EventSchema.statics.atSingleDay = function search (year, month, day, cb) {
+EventSchema.static('atSingleDay', function (d, cb) {
 
-	var from = new Date(year, month - 1, day, 0, 0, 0);
-    var until = new Date(year, month - 1 , day, 23, 59, 59);
+	var from = new Date(d[0], d[1] - 1, d[2], 0, 0, 0);
+    var until = new Date(d[0], d[1] - 1 , d[2], 23, 59, 59);
 
-	return this
-        .where('startTime').gte(from).lte(until)
-        .sort('startTime',1)
-        .populate('_calendar', ['picture'])
+	return this.where('startTime').gte(from).lte(until)
+        .sort('startTime')
+        .populate('_calendar', 'picture')
         .exec(cb);
-};
+});
 
 
 var Event = mongoose.model('event', EventSchema);

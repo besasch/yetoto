@@ -1,7 +1,6 @@
 var http    = require('http');
 var fs      = require('fs');
 var urll    = require('url');
-var http    = require('http');
 
 imageHelpers = {
 

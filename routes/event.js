@@ -19,7 +19,7 @@ module.exports = function(app){
 
             Event.findById(req.params.id)
             .populate('owner')
-            .run(function(err, doc){
+            .exec(function(err, doc){
 
                 res.render('event.ejs', {
                     calendars: docs || [] ,
@@ -37,7 +37,7 @@ module.exports = function(app){
             
         Event.findById(req.params.id)
         .populate('owner')
-        .run(function(err, doc){
+        .exec(function(err, doc){
 
             var outputObj = {
                 "eventItem" : doc
