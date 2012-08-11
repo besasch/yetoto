@@ -1,0 +1,17 @@
+
+# Prerequisites:
+
+* MongoDb
+* Node
+
+# How to install:
+
+1. Clone the repository to your machine
+2. Open terminal and navigate into the folder containing the project
+3. Run `npm install` in order to download necessary node modules
+4. Add the line `127.0.0.1 www.yeto.to` to your host file [*](http://de.wikipedia.org/ "http://superuser.com/questions/152146/how-to-alias-a-hostname-on-mac-osx")
+5. Start your mongodb via `./bin/mongod` from your mongoDb folder
+6. Start the node app via `node app.js` from your app folder
+7. Open `localhost:3000` or `www.yeto.to:3000` via web browser
+
+
