@@ -1,15 +1,21 @@
-h1. << yetoto. >>
+yetoto.
 
-<< A simple and easy web application to publish events and gather information about events. >>
+A simple and easy web application to publish events and gather information about events.
 
-h2. Get started:
 
-h3. Prerequisites:
+Get started:
+============
+
+
+Prerequisites:
+------------
 
 * MongoDb
 * Node
 
-h3. How to install:
+
+How to install:
+------------
 
 1. Clone the repository to your machine
 2. Open terminal and navigate into the folder containing the project
