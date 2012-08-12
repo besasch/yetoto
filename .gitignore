@@ -1,5 +1,4 @@
-node_modules/
-node_modules/*
+
 public/uploads/*
 views/backups/
 views/backups/*
