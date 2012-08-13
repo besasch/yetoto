@@ -16,6 +16,15 @@ var CalendarSchema = new Schema({
     owner: { type: Schema.ObjectId, ref: 'user' }
 });
 
+CalendarSchema.static('getCalendarData', function (id, cb) {
+
+	return this.findById(id)
+        .populate('events')
+        .populate('owner')
+        .exec(cb);
+});
+
+
 var Calendar = mongoose.model('calendar', CalendarSchema);
 
 

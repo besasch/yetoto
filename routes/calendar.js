@@ -31,10 +31,7 @@ module.exports = function(app){
     
         Calendar.find({}, function(err, docs){
 
-            Calendar.findById(req.params.id)
-            .populate('events')
-            .populate('owner')
-            .exec(function(err, doc){
+            Calendar.getCalendarData(req.params.id, function(err, doc){
 
                 res.render('calendar.ejs', {
                     calendars: docs || [],
