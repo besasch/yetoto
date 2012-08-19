@@ -1,3 +1,11 @@
 public/uploads/*
 views/backups/
 views/backups/*
+.metadata/*
+.metadata
+.idea/*
+.idea
+node-modules/*
+node-modules/
+.DS_Store
+.project

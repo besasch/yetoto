@@ -1,4 +1,5 @@
 var passport = require('passport');
+var User = require('../models/user').User; // mongoose modal verfügbar machen
 
 module.exports = function(app){
 
@@ -17,5 +18,46 @@ module.exports = function(app){
 		req.logOut();
 		res.redirect('/');
 	});
+	
+	app.get('/profile', function (req, res){
+		console.log(req.user._id);
 
+            User.findById(req.user._id, function(err, doc){
+
+                res.render('profile.ejs', {
+                    user: doc,
+                	layout:'public-layout',
+                	title: "Profile of " + req.user.firstname + " " + req.user.lastname
+                	
+                });
+                
+            });
+
+	
+	});
+
+	app.post('/profile', function(req, res){
+		
+		User.findById(req.user._id, function(err, doc){
+
+               doc.prefLocation =  req.body.prefLocation;
+               doc.save(function(err) {
+		            if (err) {
+		                console.log('error changing user data');
+		                console.log(err);
+		            } else {
+		                console.log('user data successfully changed');
+		                res.redirect('/profile');
+		             
+		            }
+        });
+
+               
+                
+            });
+
+		
+	}
+	
+	 )
 };

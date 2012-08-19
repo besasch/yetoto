@@ -6,10 +6,11 @@ var Event = require('../models/event').Event;
 // getting the Config
 var CONFIG = require('config');
 var format = require('util').format;
+var auth = require('../helper/authHelper.js');
 
 module.exports = function(app){
 
-    app.get('/calendars', function(req, res){
+    app.get('/calendars', auth.ensureAuthenticated, function(req, res){
 
         //get all the data
         Calendar.find({}, function(err, docs){

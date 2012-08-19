@@ -1,0 +1,16 @@
+<div class="well row">
+
+
+
+
+    <h1><%= user.firstname + " " + user.lastname %></h1>
+	
+	
+	    <form action="/profile" method="post" enctype="multipart/form-data">
+    	  <strong>Prefered Location:</strong> <input type="text" id="address" name="prefLocation" value="<%= user.prefLocation %>" /> <br/>
+
+
+        <input type="submit" value="Update my Profile!"/>
+    </form>
+	
+</div>
