@@ -1,6 +1,8 @@
 helper = require('../helper/dateHelper.js');
-auth = require('../helper/authHelper.js');
+
 var moment = require('moment');
+
+var auth = require('../helper/authHelper.js');
 
 // Requiring the model
 var Calendar = require('../models/calendar').Calendar;
@@ -9,18 +11,19 @@ var Event = require('../models/event').Event;
 // getting the Config
 var CONFIG = require('config');
 
-module.exports = function(app){
-
-    app.get('/today', auth.ensureAuthenticated, function(req, res) {
-         
+//function showToday(auth.ensureAuthenticated, function(req, res) {
+exports.showToday = function(auth.ensureAuthenticated, req, res) {    
+        
         var today = moment();
-
+        
         res.redirect('/day/'+ today.year() +'/' + (today.month()+1) + '/' + today.date());
-    });
+        
+    };
 
 
-    app.get('/day/:year/:month/:day', auth.ensureAuthenticated, function(req, res) {
+exports.showDay = function(req, res) {
             
+        // req.param from URL
         var year = req.params.year;
         var month = req.params.month;
         var day = req.params.day;
@@ -40,10 +43,11 @@ module.exports = function(app){
                 });
             });
         }
-    });
+    };
 
 
-    app.get('/data/:year/:month/:day', auth.ensureAuthenticated, function(req, res) {
+
+exports.getDay = function(req, res) {
             
         var year = req.params.year;
         var month = req.params.month;
@@ -67,7 +71,6 @@ module.exports = function(app){
 
             });
         }
-    });
+    };
 
 
-};
