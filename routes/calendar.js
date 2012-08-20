@@ -8,9 +8,7 @@ var CONFIG = require('config');
 var format = require('util').format;
 var auth = require('../helper/authHelper.js');
 
-module.exports = function(app){
-
-    app.get('/calendars', auth.ensureAuthenticated, function(req, res){
+exports.showNewCalendar = function(req, res){
 
         //get all the data
         Calendar.find({}, function(err, docs){
@@ -23,12 +21,11 @@ module.exports = function(app){
                 user: req.user
             });
         });
-    });
+    };
 
 
     // Calendars:
-
-    app.get('/calendars/:id', function(req, res) {
+exports.showCalendar = function(req, res) {
     
         Calendar.find({}, function(err, docs){
 
@@ -46,12 +43,12 @@ module.exports = function(app){
             });
         });
         
-    });
+    };
 
 
 
 
-    app.post('/calendars', function(req, res) {
+exports.createCalendar = function(req, res) {
             
         var newCalendar = new Calendar();
         
@@ -75,17 +72,17 @@ module.exports = function(app){
         });
         
         res.redirect('/');
-    });
+    };
 
 
-    app.put('/calendars/:id', function(req, res) {
+exports.updateCalendar = function(req, res) {
             
         //TODO Implement calendar update
 
-    });
+    };
 
 
-    app.delete('/calendars/:id', function(req, res) {
+exports.deleteCalendar = function(req, res) {
     
         
     
@@ -119,5 +116,4 @@ module.exports = function(app){
                 }
             });
         });
-    });
-};
+    };

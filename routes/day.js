@@ -12,7 +12,7 @@ var Event = require('../models/event').Event;
 var CONFIG = require('config');
 
 //function showToday(auth.ensureAuthenticated, function(req, res) {
-exports.showToday = function(auth.ensureAuthenticated, req, res) {    
+exports.showToday = function(req, res) {    
         
         var today = moment();
         
