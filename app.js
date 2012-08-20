@@ -46,11 +46,7 @@ app.configure('production', function(){
 
 // Routes
 require('./router')(app);
-require('./routes/public')(app);
-//require('./routes/day')(app);
-require('./routes/user')(app);
-//require('./routes/calendar')(app); 
-require('./routes/event')(app);
+
 
 // Start le app
 app.listen(CONFIG.server.port, function(){

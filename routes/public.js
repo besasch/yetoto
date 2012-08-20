@@ -6,9 +6,9 @@ var User = require('../models/user').User;
 // getting the Config
 var CONFIG = require('config');
 
-module.exports = function(app){
 
-    app.get('/', function(req, res){
+
+exports.goToStartpage = function(req, res){
 
         if (req.isAuthenticated()) {
             res.redirect('/today');
@@ -21,6 +21,6 @@ module.exports = function(app){
                 user: req.user
             });
         }
-    });
-};
+    };
+
 

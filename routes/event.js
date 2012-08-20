@@ -9,12 +9,10 @@ var Event = require('../models/event').Event;
 // getting the Config
 var CONFIG = require('config');
 
-module.exports = function(app){
-
 
     // Events:
-    app.get('/events/:id', auth.ensureAuthenticated, function(req, res) {
-            
+//    app.get('/events/:id', auth.ensureAuthenticated, function(req, res) {
+exports.showEvent = function(req, res) {
         Calendar.find({}, function(err, docs){
 
             Event.findById(req.params.id)
@@ -31,9 +29,10 @@ module.exports = function(app){
                 });
             });
         });
-    });
+    };
 
-        app.get('/data/events/:id', auth.ensureAuthenticated, function(req, res) {
+//app.get('/data/events/:id', auth.ensureAuthenticated, function(req, res) {
+exports.getEvent = function(req, res) {
             
         Event.findById(req.params.id)
         .populate('owner')
@@ -46,17 +45,17 @@ module.exports = function(app){
             res.send({meta: 200, data: outputObj}, 200);
         });
         
-    });
+    };
 
 
-    app.get('calendars/:cal_id/events/:event_id', auth.ensureAuthenticated, function(req, res) {
-            
+//app.get('calendars/:cal_id/events/:event_id', auth.ensureAuthenticated, function(req, res) {
+exports.showEventInCalender = function(req, res) {            
         res.redirect('/events/' + req.params.event_id);
 
-    });
+    };
 
-
-    app.post('/calendars/:cal_id/events', auth.ensureAuthenticated, function(req, res) {
+//auth.ensureAuthenticated must be added here!
+exports.createEvent = function(req, res) {
             
         var calendarId = req.params.cal_id;
 
@@ -101,17 +100,19 @@ module.exports = function(app){
                 });
             }
         });
-    });
+    };
 
     
-    app.put('/events/:id', auth.ensureAuthenticated, function(req, res) {
+//    app.put('/events/:id', auth.ensureAuthenticated, function(req, res) {
+exports.updateEvent = function(req, res) {
             
         //TODO Implement event update
 
-    });
+    };
 
 
-    app.delete('/calendars/:cal_id/events/:event_id', auth.ensureAuthenticated, function(req, res) {
+//app.delete('/calendars/:cal_id/events/:event_id', auth.ensureAuthenticated, function(req, res) {
+exports.deleteEvent = function(req, res) {
     
         var calendarId = req.params.cal_id;
         var eventId = req.params.event_id;
@@ -143,5 +144,4 @@ module.exports = function(app){
                 }
              });
         });
-    });
-}
+    };
