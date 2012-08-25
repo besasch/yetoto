@@ -16,7 +16,7 @@ app.get('/today', dayController.showToday);
 app.get('/day/:year/:month/:day', dayController.showDay);
 
 //HTML Calendar
-app.get('/calendars', calendarController.showNewCalendar);
+app.get('/calendars/new', calendarController.showNewCalendar);
 app.get('/calendars/:id', calendarController.showCalendar);
 app.post('/calendars', calendarController.createCalendar);
 app.put('/calendars/:id', calendarController.updateCalendar); 
