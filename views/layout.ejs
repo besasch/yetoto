@@ -80,19 +80,12 @@
                     <li><a href="#"><i class="icon-ban-circle"></i> Hide</a></li>
                     <li><a href="#"><i class="icon-minus"></i> Unsubscribe</a></li>
                     <li class="divider"></li>
-                    <li><a href="javascript: submitform<%= calendars[i]._id %>()"><i class="icon-minus"></i> Delete Calendar</a></li>
+                    <li><a href="<%= calendars[i]._id %>" class="deleteCalendar"><i class="icon-minus"></i> Delete Calendar</a></li>
                     
                     <form id="newCalForm<%= calendars[i]._id %>" action="/calendars/<%= calendars[i]._id %>" method="post">
                         <input type="hidden" name="_method" value="delete" />
-                    </form> 
-                    <script type="text/javascript">
-                        function submitform<%= calendars[i]._id %>()
-                        {
-                            $(document).ready(function(){
-                                $("form#newCalForm<%= calendars[i]._id %>").submit();
-                            })
-                        };
-                    </script>   
+                    </form>  
+                   
                     
                 </ul>
             </li>
@@ -111,7 +104,7 @@
 
 <!-- dummy modal -->
 
-<div class="modal fade hide" id="eventModal">
+<div class="modal fade hide" id="Modal">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">×</button>
     <h3><!-- le title --></h3>
@@ -123,6 +116,9 @@
     <!-- le buttons -->
   </div>
 </div>
+
+
+
 
 <!-- Le javascript
 ================================================== -->

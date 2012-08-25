@@ -20,7 +20,7 @@ app.get('/calendars/new', calendarController.showNewCalendar);
 app.get('/calendars/:id', calendarController.showCalendar);
 app.post('/calendars', calendarController.createCalendar);
 app.put('/calendars/:id', calendarController.updateCalendar); 
-app.delete('/calendars/:id', calendarController.deleteCalendar);
+app.post('/calendars/:id/delete', calendarController.deleteCalendar);
  
 //HTML Event
 app.get('/events/:id', eventController.showEvent); 

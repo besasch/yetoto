@@ -21,8 +21,8 @@
 	function renderEventModal(item){
 
 		clearModal();
-		$('#eventModal .modal-header h3').text(item.title);
-		$('#eventModal .modal-body').append($('<p>').text(item.body));
+		$('#Modal .modal-header h3').text(item.title);
+		$('#Modal .modal-body').append($('<p>').text(item.body));
 	}
 
 	function renderTextField(id, name, label){
@@ -59,9 +59,9 @@
 	function renderAddEventModal(calendarId){
 
 		clearModal();
-		$('#eventModal .modal-header h3').text("Add Event");
+		$('#Modal .modal-header h3').text("Add Event");
 
-		$('#eventModal .modal-body').append($('<form/>', {
+		$('#Modal .modal-body').append($('<form/>', {
 			name: 'addEvent',
 			action: '/calendars/' + calendarId + '/events',
 			method: 'post',
@@ -79,15 +79,37 @@
 		}));
 	}
 
+	function renderDeleteCalendarModal(calendarId){
+
+		clearModal();
+		$('#Modal .modal-header h3').text("Delete Calendar");
+
+		$('#Modal .modal-body').text('Are you sure you want to delete this calender?');
+
+		$('#Modal .modal-footer').append($('<form/>', {
+			name: 'deleteCalendar',
+			action: '/calendars/' + calendarId + '/delete',
+			method: 'post',
+			class: 'form-horizontal',
+			html:
+			$('<fieldset/>', {
+				html:  
+				'<input type="submit" value="Yes, delete it!" class="btn btn-info"/>'
+			})
+		}));
+	}
+
+
+
 	function closeDropdowns(){
 		$('.dropdown.open').removeClass('open');
 	}
 
 	function clearModal(){
 
-		$('#eventModal .modal-header h3').empty();
-		$('#eventModal .modal-body').empty();
-		$('#eventModal .modal-footer').empty();
+		$('#Modal .modal-header h3').empty();
+		$('#Modal .modal-body').empty();
+		$('#Modal .modal-footer').empty();
 	}
 
 	function createEventElement(item) {
@@ -95,7 +117,7 @@
 			.append($('<a>').attr('href','').click(function(event) {
 				//event.preventDefault();
 				loadEvent(item._id);
-				$('#eventModal').modal('show');
+				$('#Modal').modal('show');
 				return false;
 			}).append($('<span>').addClass('fulllink'))
 			)
@@ -229,8 +251,22 @@
 		//console.log(calendarId);
 		closeDropdowns();
 		renderAddEventModal(calendarId);
-		$('#eventModal').modal('show');
+		$('#Modal').modal('show');
 		return false;
+	})
+	
+		
+		$('a.deleteCalendar').click(function(calendar) {
+		calendar.preventDefault();
+		console.log('komisch');
+		
+		var calendarId = $(this).attr('href');
+		console.log(calendarId);
+		closeDropdowns();
+		renderDeleteCalendarModal(calendarId);
+		$('#Modal').modal('show');  //Event Modal vorerst missbrauchen
+		return false;
+		
 	})
 
 	// init the view:

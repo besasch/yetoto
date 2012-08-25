@@ -82,10 +82,7 @@ exports.updateCalendar = function(req, res) {
     };
 
 
-exports.deleteCalendar = function(req, res) {
-    
-        
-    
+exports.deleteCalendar = function(req, res) {    
         Calendar.findById(req.params.id, function(err, doc){
 
             var calEvents = doc.events;
