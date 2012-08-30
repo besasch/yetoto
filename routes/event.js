@@ -117,31 +117,30 @@ exports.deleteEvent = function(req, res) {
         var calendarId = req.params.cal_id;
         var eventId = req.params.event_id;
 
-        Event.findById(eventId, function(err, eve){
+        Event.findByIdAndRemove(eventId, function(err){
 
-            eve.remove(function(err) {
-                if (err) {
-                    console.log(':-( error deleting event ' + eve.title);
-                    console.log(err);
-                } else {
+            if (err) {
+                console.log(':-( error deleting event with Id: ' + eventId);
+                console.log(err);
+            } else {
 
-                    console.log(':-) event ' + eve.title +' successfully deleted from events-collection');
+                console.log(':-) event with id ' + eventId +' successfully deleted from db');
 
-                    Calendar.findById(calendarId, function(err, cal){
+                Calendar.findById(calendarId, function(err, cal){
 
-                        cal.events.remove(eventId);
-                        cal.save(function(err) {
-                            if (err) {
-                                console.log(':-( error deleting event ' + eve.title + ' from calendar' + cal.title);
-                                console.log(err);
-                            } else {
-                                console.log(':-) event ' + eve.title +' successfully deleted from calendar ' + cal.title);
-                                res.redirect('/calendars/' + calendarId);
-                            }
-                        
-                        });
+                    cal.events.remove(eventId);
+                    cal.save(function(err) {
+                        if (err) {
+                            console.log(':-( error deleting event with Id ' + eventId + ' from calendar' + cal.title);
+                            console.log(err);
+                        } else {
+                            console.log(':-) event with Id ' + eventId +' successfully deleted from calendar ' + cal.title);
+                            res.redirect('/calendars/' + calendarId);
+                        }
+                    
                     });
-                }
-             });
+                });
+            }
+
         });
     };

@@ -19,15 +19,15 @@ app.get('/day/:year/:month/:day', dayController.showDay);
 app.get('/calendars/new', calendarController.showNewCalendar);
 app.get('/calendars/:id', calendarController.showCalendar);
 app.post('/calendars', calendarController.createCalendar);
-app.put('/calendars/:id', calendarController.updateCalendar); 
+app.put('/calendars/:id', calendarController.updateCalendar);
 app.post('/calendars/:id/delete', calendarController.deleteCalendar);
  
 //HTML Event
-app.get('/events/:id', eventController.showEvent); 
-app.get('calendars/:cal_id/events/:event_id', eventController.showEventInCalender);
+app.get('/events/:id', eventController.showEvent);
+app.get('/calendars/:cal_id/events/:event_id', eventController.showEventInCalender);
 app.post('/calendars/:cal_id/events', eventController.createEvent);
 app.put('/events/:id', eventController.updateEvent);
-app.delete('/calendars/:cal_id/events/:event_id', eventController.deleteEvent); 
+app.delete('/calendars/:cal_id/events/:event_id', eventController.deleteEvent);
  
 //HTML Public
 app.get('/', publicController.goToStartpage);
@@ -45,8 +45,8 @@ app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', '
 */
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/today', failureRedirect: '/' }));
 app.get('/profile', userController.showProfile);
-app.post('profile', userController.updateProfile);
-app.get('/logout', userController.logoutUser); 
+app.post('/profile', userController.updateProfile);
+app.get('/logout', userController.logoutUser);
  
 // JSON API Day
 app.get('/data/:year/:month/:day', dayController.getDay);

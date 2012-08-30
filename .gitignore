@@ -9,3 +9,5 @@ node-modules/*
 node-modules/
 .DS_Store
 .project
+remove/
+remove/*
