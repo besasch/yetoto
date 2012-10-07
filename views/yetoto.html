@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le styles -->
+    <link rel="stylesheet" href="styles/bootstrap.css">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+</head>
+
+<body style="padding-top: 60px; padding-bottom: 40px;">
+
+  <!-- NavBar -->
+  <div id="navBar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/today">yetoto.</a>
+          <div class="nav-collapse pull-right">
+              <ul class="nav">
+                  <li class="dropdown">
+                      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                          <i class="icon-user icon-white"></i>
+                          <span class="caret"></span>
+                      </a>
+                      <ul class="dropdown-menu">
+                          <li><a href="/Profile">Profile</a></li>
+                          <li class="divider"></li>
+                          <li><a href="/logout">Sign Out</a></li>
+                      </ul>
+                  </li>
+              </ul>
+          </div>
+          <form class="navbar-search pull-right">
+              <input type="text" class="search-query" placeholder="Search">
+          </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="main" class="container">
+
+    <!-- ActionBar -->
+    <div id="actionBar" style="padding-bottom: 100px;">
+        <!--<ol class="unstyled">
+            <li class="dropdown" style="float: left;">
+                <a href="/calendars/new">
+                    <button class="btn btn-info" style="height: 80px;  width: 32px;">
+                        <i class="icon-plus icon-white"></i>
+                    </button>
+                </a>
+            </li>
+            <% for (var i=0; i < calendars.length; i++) { %>
+            <li class="dropdown" style= "float: left; margin-left: 5px;">
+                <button class="dropdown-toggle thumbnail" data-toggle="dropdown">
+                    <img src="<%= calendars[i].picture %>" style="width: 70px; height: 70px;">
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="/calendars/<%= calendars[i]._id %>"><i class="icon-info-sign"></i> <%= calendars[i].title %></a></li>
+                    <li><a href="<%= calendars[i]._id %>" class="addEvent"><i class="icon-comment"></i> Add Event</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#"><i class="icon-ban-circle"></i> Hide</a></li>
+                    <li><a href="#"><i class="icon-minus"></i> Unsubscribe</a></li>
+                    <li class="divider"></li>
+                    <li><a href="<%= calendars[i]._id %>" class="deleteCalendar"><i class="icon-minus"></i> Delete Calendar</a></li>
+                    <form id="newCalForm<%= calendars[i]._id %>" action="/calendars/<%= calendars[i]._id %>" method="post">
+                        <input type="hidden" name="_method" value="delete" />
+                    </form>  
+                </ul>
+            </li>
+            <% } %>
+        </ol>-->
+    </div>
+    <button class="btn" data-bind="click: goToNewEvent">Add</button>
+    <!-- Day View Information -->
+    <div class="page-header">
+      <div class="date-controls">
+        <h3 data-bind="text: showDay"></h3>
+      </div>
+    </div>
+
+    <!-- Events -->
+    <div id="events" data-bind="foreach: events">
+      <div class="event">
+        <a href="" data-bind="click: $root.goToEvent"><span class="fulllink"></span></a>
+        <img src="img/photo.jpg">
+        <span class="time" data-bind="text: startTime"></span>
+        <div class="controls">
+          <!-- controls -->
+        </div>
+        <div class="headline">
+          <h3 data-bind="text: title"></h3>
+        </div>
+      </div>
+    </div>
+   
+  </div>
+
+  <textarea name="events" data-bind="value: ko.toJSON(events)" ></textarea>
+
+  <!-- Modal -->
+  <div id="ShowEventModal" class="modal fade" data-bind="with: chosenEventData">
+    <div class="modal-header" >
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3 data-bind="text: title"><!-- le title --></h3>
+    </div>
+    <div class="modal-body">
+      <p  data-bind="text: body"><!-- le content --></p>
+    </div>
+    <div class="modal-footer">
+      <!-- le buttons -->
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="NewEventModal" class="modal fade" data-bind="with: newEventData">
+    <div class="modal-header" >
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      
+      <div class="control-group">
+        <label class="control-label">Title</label>
+        <div class="controls">
+          <input type="text" placeholder="Event Title" data-bind="value: title">
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-body">
+      <div class="control-group">
+        <label class="control-label">Text</label>
+        <div class="controls">
+          <input type="text" placeholder="Event Text" data-bind="value: body">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-bind="click: $root.addEvent">Save Event</button>
+    </div>
+  </div>
+
+  <!-- le javascript -->
+  <!-- The missing protocol means that it will match the current protocol, either http or https. If running locally, we use the local jQuery. -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="js/libs/jquery-1.7.2.min.js"><\/script>')</script>
+  <script src="js/libs/moment.min.js"></script>
+  <script src="js/libs/bootstrap.min.js"></script>
+  <script src='js/libs/knockout-2.1.0.js'></script>
+
+  <script src="js/client.js"></script>
+</body>
+</html>

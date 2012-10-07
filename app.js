@@ -12,6 +12,13 @@ var app = module.exports = express.createServer();
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
+  app.register('.html', {
+    compile: function(str, options){
+      return function(locals){
+        return str;
+      };
+    }
+  });
   app.use(express.compiler({ src : __dirname + '/public', enable: ['less']}));
   app.use(express.cookieParser());
   app.use(express.bodyParser({ keepExtensions: true, uploadDir: __dirname + "/public" + CONFIG.images.dir }));

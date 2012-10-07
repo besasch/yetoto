@@ -9,9 +9,7 @@ var Event = require('../models/event').Event;
 // getting the Config
 var CONFIG = require('config');
 
-
-    // Events:
-//    app.get('/events/:id', auth.ensureAuthenticated, function(req, res) {
+// Events:
 exports.showEvent = function(req, res) {
         Calendar.find({}, function(err, docs){
 
@@ -49,7 +47,7 @@ exports.getEvent = function(req, res) {
 
 
 //app.get('calendars/:cal_id/events/:event_id', auth.ensureAuthenticated, function(req, res) {
-exports.showEventInCalender = function(req, res) {            
+exports.showEventInCalender = function(req, res) {
         res.redirect('/events/' + req.params.event_id);
 
     };
