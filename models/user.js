@@ -13,7 +13,7 @@ var UserSchema = new Schema({
 	subscriptions: [{ type: Schema.ObjectId, ref: 'calendar' }],
 	userCalendars: [{ type: Schema.ObjectId, ref: 'calendar' }],
 
-    accounts: []
+    accounts: [],
     // Facebook Data:
     // provider: String,
 	// uid: String,
@@ -21,7 +21,7 @@ var UserSchema = new Schema({
 
     // Meta Data
     creationTime: {type: Date, default: Date.now},
-    modificationTime: {type: Date, default: Date.now},
+    modificationTime: {type: Date, default: Date.now}
 });
 
 
