@@ -9,21 +9,21 @@ var EventSchema = new Schema({
     creationTime: {type: Date, default: Date.now},
     modificationTime: {type: Date, default: Date.now},
     title: String,
-    startTime: Date,
-    endTime: Date,
+    startDate: Date,
+    endDate: Date,
     location: String,
-    body: String,
+    content: String,
     _calendar: { type: Schema.ObjectId, ref: 'calendar' },
     owner: { type: Schema.ObjectId, ref: 'user' }
 });
 
-EventSchema.static('atSingleDay', function (d, cb) {
+EventSchema.static('getAllEventsByDate', function (inputDate, cb) {
 
-	var from = new Date(d[0], d[1] - 1, d[2], 0, 0, 0);
-    var until = new Date(d[0], d[1] - 1 , d[2], 23, 59, 59);
+	var from = new Date(inputDate[0], d[1] - 1, inputDate[2], 0, 0, 0);
+    var until = new Date(inputDate[0], inputDate[1] - 1 , inputDate[2], 23, 59, 59);
 
-	return this.where('startTime').gte(from).lte(until)
-        .sort('startTime')
+	return this.where('startDate').gte(from).lte(until)
+        .sort('startDate')
         .populate('_calendar', 'picture')
         .exec(cb);
 });
