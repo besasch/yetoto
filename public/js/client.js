@@ -1,21 +1,40 @@
-function Event(title, body, startDate) {
+
+/**
+ * Event class to create consistend event objects in the whole application
+ */
+function Event(title, content, startDate, endDate, location, _calendar, creationTime, modificationTime, owner) {
     var self = this;
+
     self.title = title;
-    self.body = body;
+    self.content = content;
     self.startDate = startDate;
+
+    self.endDate = endDate;
+    self.location = location;
+    self._calendar = calendar;
+    self.creationTime = creationTime;
+    self.modificationTime = modificationTime;
+    self.owner = owner;
 
     self.startTime = ko.computed(function() {
         return moment(self.startDate).format('HH:mm');
     }, self);
+
+    self.endTime = ko.computed(function() {
+        return moment(self.endDate).format('HH:mm');
+    }, self);
 }
 
+/**
+ * ViewModel to show events to the user
+ */
 function EventViewModel() {
     var self = this;
 
     // Data
-    self.now = moment();
-    self.shownDay = ko.computed(function(){
-        return moment(self.now).format("DD.MM.YYYY");
+    self.todaysDate = moment(); // Contains today's date
+    self.shownDay = ko.computed(function(){ // Contains the date of the day shown on the frontend
+        return moment(self.todaysDate).format("DD.MM.YYYY");
     })
 
     self.events = ko.observableArray([
@@ -34,12 +53,18 @@ function EventViewModel() {
         $('#NewEventModal').modal('hide');
     };
 
+    /*
+     * Shows a modal to the user for adding a new event 
+     */
     self.goToNewEvent = function() {
         self.newEventData(new Event("", "" , moment()));
-        //console.log("goto");
         $('#NewEventModal').modal('show');
     };
 
+
+    /*
+     * Shows a modal to the user containing all data for a specific event 
+     */
     self.goToEvent = function(chosenEvent) {
         self.chosenEventData(chosenEvent);
         $('#ShowEventModal').modal('show');
@@ -47,18 +72,28 @@ function EventViewModel() {
 
 
     // Background Behaviour
+
+    /*
+     * Initialize the app with relevant data
+     */
     self.init = function(){
-        self.load(self.now);
+        self.loadEvents(self.todaysDate);
     }
 
-    self.load = function(date){
+    /*
+     * Load a date's events from the server
+     */
+    self.loadEvents = function(date){
 
+        // Ripp the date parameter apart and build the server Url with it
         year = moment(date).year();
         month = moment(date).month()+1;
         day = moment(date).date();
+        serverUrl = "/data/"+year+"/"+month+"/"+day;
 
-        // Load initial state from server, convert it to Task instances, then populate self.events‚
-        $.getJSON("/data/"+year+"/"+month+"/"+day, function(allData) {
+        // Load initial state from server, convert it to instances 
+        // of the Event class, then populate self.events‚
+        $.getJSON(serverUrl, function(allData) {
             var mappedEvents = $.map(allData, function(item) {
                 console.log("Load Ajax");
                 return new Event(item);
@@ -68,8 +103,8 @@ function EventViewModel() {
 
     }
 
+    // Initialize the EventsViewModel
     self.init();
-
 }
 
 ko.applyBindings(new EventViewModel());
