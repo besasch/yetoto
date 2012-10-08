@@ -4,9 +4,6 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var UserSchema = new Schema({
-	
-    creationTime: {type: Date, default: Date.now},
-    modificationTime: {type: Date, default: Date.now},
     
     firstname: String,
     lastname: String,
@@ -21,6 +18,10 @@ var UserSchema = new Schema({
     // provider: String,
 	// uid: String,
 	// image: String
+
+    // Meta Data
+    creationTime: {type: Date, default: Date.now},
+    modificationTime: {type: Date, default: Date.now},
 });
 
 

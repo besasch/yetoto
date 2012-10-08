@@ -6,14 +6,17 @@ var ObjectId = Schema.ObjectId;
 
 
 var EventSchema = new Schema({
-    creationTime: {type: Date, default: Date.now},
-    modificationTime: {type: Date, default: Date.now},
+
     title: String,
     startDate: Date,
     endDate: Date,
     location: String,
     content: String,
     _calendar: { type: Schema.ObjectId, ref: 'calendar' },
+
+    // Meta Data
+    creationTime: {type: Date, default: Date.now},
+    modificationTime: {type: Date, default: Date.now},
     owner: { type: Schema.ObjectId, ref: 'user' }
 });
 
