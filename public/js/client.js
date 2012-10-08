@@ -11,7 +11,7 @@ function Event(title, content, startDate, endDate, location, _calendar, creation
 
     self.endDate = endDate;
     self.location = location;
-    self._calendar = calendar;
+    self._calendar = _calendar;
     self.creationTime = creationTime;
     self.modificationTime = modificationTime;
     self.owner = owner;
@@ -33,9 +33,10 @@ function EventViewModel() {
 
     // Data
     self.todaysDate = moment(); // Contains today's date
-    self.shownDay = ko.computed(function(){ // Contains the date of the day shown on the frontend
+    self.shownDay = ko.observable(); // // Contains the date of the day shown on the frontend
+    self.shownDayFormatted = ko.computed(function(){ // Contains the formatted date
         return moment(self.todaysDate).format("DD.MM.YYYY");
-    })
+    });
 
     self.events = ko.observableArray([
         new Event("Event 1", "Body 1", moment()),
@@ -45,7 +46,7 @@ function EventViewModel() {
     self.newEventData = ko.observable();
     self.chosenEventData = ko.observable();
 
-    // Becaviour
+    // Behaviour
     self.addEvent = function() {
         self.events.push(new Event(self.newEventData().title, self.newEventData().body, self.newEventData().startDate));
         console.log("new");
@@ -54,7 +55,7 @@ function EventViewModel() {
     };
 
     /*
-     * Shows a modal to the user for adding a new event 
+     * Shows a modal to the user for adding a new event
      */
     self.goToNewEvent = function() {
         self.newEventData(new Event("", "" , moment()));
@@ -63,7 +64,7 @@ function EventViewModel() {
 
 
     /*
-     * Shows a modal to the user containing all data for a specific event 
+     * Shows a modal to the user containing all data for a specific event
      */
     self.goToEvent = function(chosenEvent) {
         self.chosenEventData(chosenEvent);
@@ -77,13 +78,17 @@ function EventViewModel() {
      * Initialize the app with relevant data
      */
     self.init = function(){
-        self.loadEvents(self.todaysDate);
-    }
+        self.shownDay(self.todaysDate); // Set shownDate to today's date
+        self.loadEvents(self.shownDay()); // Load the events
+    };
 
     /*
      * Load a date's events from the server
      */
     self.loadEvents = function(date){
+
+        // Clear the array first
+        self.events(null);
 
         // Ripp the date parameter apart and build the server Url with it
         year = moment(date).year();
@@ -91,17 +96,17 @@ function EventViewModel() {
         day = moment(date).date();
         serverUrl = "/data/"+year+"/"+month+"/"+day;
 
-        // Load initial state from server, convert it to instances 
+        // Load initial state from server, convert it to instances
         // of the Event class, then populate self.events‚
         $.getJSON(serverUrl, function(allData) {
+            console.log("Loaded Events: "+allData);
             var mappedEvents = $.map(allData, function(item) {
-                console.log("Load Ajax");
                 return new Event(item);
             });
             self.events(mappedEvents);
         });
 
-    }
+    };
 
     // Initialize the EventsViewModel
     self.init();

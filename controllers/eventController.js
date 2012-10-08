@@ -17,7 +17,7 @@ exports.getDay = function(req, res) {
 
     if(!moment(year + "-" + month + "-" + day, "YYYY-MM-DD").isValid()){
 
-        res.redirect('/today');
+        res.redirect('/');
 
     } else {
 
@@ -28,7 +28,7 @@ exports.getDay = function(req, res) {
                 "events" : eventdocs || []
             };
         
-        res.send({meta: 200, data: outputObj}, 200);
+        res.send({data: outputObj}, 200);
 
         });
     }

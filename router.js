@@ -33,6 +33,8 @@ module.exports = function(app){
 
 	app.get('/data/:year/:month/:day', eventController.getDay);
 
-	// ...
+	// DEVELOPMENT
+
+	app.get('/test', publicController.goToAppDEV);
 
 };

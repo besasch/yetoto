@@ -30,3 +30,13 @@ exports.goToApp = function(req, res){
 
     }
 };
+
+// ONLY FOR DEVELOPMENT
+exports.goToAppDEV = function(req, res){
+
+
+        res.render('yetoto.html', {
+            layout: false
+        });
+    
+};

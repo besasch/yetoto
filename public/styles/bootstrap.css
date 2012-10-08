@@ -4402,9 +4402,9 @@ div.time-picker li.selected {
 
   z-index: 1;
   /* edit: fixes overlap error in IE7/8, 
-	 make sure you have an empty gif */
+	 make sure you have an empty gif 
 
-  background-image: url('empty.gif');
+  background-image: url('empty.gif');*/
 }
 .event .controls {
   width: 160px;
