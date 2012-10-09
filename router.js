@@ -33,6 +33,8 @@ module.exports = function(app){
 
 	app.get('/data/:year/:month/:day', eventController.getDay);
 
+	app.post('/data/:cal_id/event', eventController.createEvent);
+
 	// DEVELOPMENT
 
 	app.get('/test', publicController.goToAppDEV);

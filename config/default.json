@@ -7,10 +7,15 @@
         "port":         3000,
         "siteUrl":      "http://localhost:3000"
     },
-    "dbMongo": {
+    "dbMongoLocal": {
         "dbhost":       "mongodb://localhost",
         "dbname":       "mydb",
         "url":          "mongodb://localhost/mydb"
+    },
+    "dbMongo": {
+        "dbhost":       "mongodb://yetoto:yetoto@alex.mongohq.com:10037",
+        "dbname":       "yetoto",
+        "url":          "mongodb://yetoto:yetoto@alex.mongohq.com:10037/yetoto"
     },
     "fb": {
         "appId": "  269877843120333",

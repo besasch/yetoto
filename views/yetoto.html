@@ -83,6 +83,8 @@
         </ol>-->
     </div>
     <button class="btn" data-bind="click: goToNewEvent">Add</button>
+    <button class="btn" data-bind="click: goToYesterday">Yesterday</button>
+    <button class="btn" data-bind="click: goToTomorrow">Tomorrow</button>
     <!-- Day View Information -->
     <div class="page-header">
       <div class="date-controls">
@@ -110,13 +112,13 @@
   <textarea name="events" data-bind="value: ko.toJSON(events)" ></textarea>
 
   <!-- Modal -->
-  <div id="ShowEventModal" class="modal fade" data-bind="with: chosenEventData">
+  <div id="ShowEventModal" class="modal fade" data-bind="with: chosenEventContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
       <h3 data-bind="text: title"><!-- le title --></h3>
     </div>
     <div class="modal-body">
-      <p  data-bind="text: body"><!-- le content --></p>
+      <p  data-bind="text: content"><!-- le content --></p> 
     </div>
     <div class="modal-footer">
       <!-- le buttons -->
@@ -124,7 +126,7 @@
   </div>
 
   <!-- Modal -->
-  <div id="NewEventModal" class="modal fade" data-bind="with: newEventData">
+  <div id="NewEventModal" class="modal fade" data-bind="with: newEventContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
       
@@ -140,7 +142,7 @@
       <div class="control-group">
         <label class="control-label">Text</label>
         <div class="controls">
-          <input type="text" placeholder="Event Text" data-bind="value: body">
+          <input type="text" placeholder="Event Text" data-bind="value: content">
         </div>
       </div>
     </div>

@@ -35,9 +35,9 @@ passport.use(new FacebookStrategy({
 
             imageHelper.getFbRedirectUrl("http://graph.facebook.com/" + profile.id + "/?fields=picture",
               function(picture){
-
+                console.log(profile);
               imageHelper.getImg({
-                  url: picture,
+                  url: picture.data.url,
                   dest: __dirname + '/public' + CONFIG.images.dir + newuser._id + '.jpg'
                 },function(err){
                   console.log(':-) image saved!');
