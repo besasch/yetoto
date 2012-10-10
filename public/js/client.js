@@ -2,27 +2,27 @@
 /**
  * Event class to create consistend event objects in the whole application
  */
-function Event(title, content, startDate, endDate, location, _calendar, creationTime, modificationTime, owner) {
+function Event(eventObject) {
     var self = this;
 
-    self.title = title;
-    self.content = content;
-    self.startDate = startDate;
+    self.title = eventObject.title;
+    self.content = eventObject.content;
+    self.startDate = eventObject.startDate;
 
-    self.endDate = endDate;
-    self.location = location;
-    self._calendar = _calendar;
-    self.creationTime = creationTime;
-    self.modificationTime = modificationTime;
-    self.owner = owner;
+    self.endDate = eventObject.endDate;
+    self.location = eventObject.location;
+    self._calendar = eventObject._calendar;
+    self.creationTime = eventObject.creationTime;
+    self.modificationTime = eventObject.modificationTime;
+    self.owner = eventObject.owner;
 
-    /*self.startTime = ko.computed(function() {
+    self.startTime = ko.computed(function() {
         return moment(self.startDate).format('HH:mm');
     }, self);
 
     self.endTime = ko.computed(function() {
         return moment(self.endDate).format('HH:mm');
-    }, self);*/
+    }, self);
 }
 
 /**
@@ -38,10 +38,7 @@ function EventViewModel() {
         return moment(self.shownDay()).format("DD.MM.YYYY");
     });
 
-    self.events = ko.observableArray([
-        new Event("Event 1", "Body 1", moment()),
-        new Event("Event 2", "Body 2", moment())
-    ]);
+    self.events = ko.observableArray(); // All the displayed events are in here
 
     self.newEventContainer = ko.observable();
     self.chosenEventContainer = ko.observable();
@@ -58,15 +55,18 @@ function EventViewModel() {
         newEvent = new Event(self.newEventContainer().title, self.newEventContainer().content,
             self.newEventContainer().startDate, self.newEventContainer().endDate, self.newEventContainer().location,
             self.newEventContainer()._calendar);
-        console.log("ajax post got event! "+JSON.stringify(newEvent));
+        
+        console.log("ajax post got event!");
         // Empty the container variable
         self.newEventContainer(null);
+
+        console.log(JSON.stringify(newEvent));
 
         // Send the event to the server
         $.ajax({
             type: 'POST',
             url: '/data/'+ newEvent._calendar +'/event',
-            data: {data: newEvent},
+            data: {"data": JSON.stringify(newEvent)},
             dataType: "json",
             success: function() {
                 // Push the event into the view array when done
@@ -138,13 +138,30 @@ function EventViewModel() {
 
         // Load initial state from server, convert it to instances
         // of the Event class, then populate self.events‚
-        $.getJSON(serverUrl, function(allData) {
-            console.log("Ajax Data: " + JSON.stringify(allData.data.events));
+        /*$.getJSON(serverUrl, function(allData) {
+            console.log("Ajax Data: " + allData.data.events);
             var mappedEvents = $.map(allData.data.events, function(item) {
+                console.log("item: "+JSON.parse(item));
                 return new Event(item);
             });
+            
             self.events(mappedEvents);
+        });*/
+
+        $.ajax({
+            url: serverUrl,
+            dataType: 'json',
+            success: function(data){
+                var mappedEvents = [];
+
+                for (var i = 0; i < data.events.length; i++){
+                    mappedEvents.push(new Event(data.events[i]));
+                }
+
+                self.events(mappedEvents);
+            }
         });
+
     };
 
     // Initialize the EventsViewModel

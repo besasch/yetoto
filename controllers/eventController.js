@@ -27,12 +27,10 @@ exports.getDay = function(req, res) {
             
             var outputObj =
             {
-                "events" : eventdocs || []
+                events : eventdocs || []
             };
-        
-        res.send({data: outputObj}, 200);
 
-        console.log("Sent back to frontend: " + JSON.stringify(outputObj));
+        res.send(JSON.stringify(outputObj), 200);
 
         });
     }
@@ -47,23 +45,23 @@ exports.createEvent = function(req, res) {
         
     var calendarId = req.params.cal_id;
 
-    console.log(req.body.data);
+    receivedEvent = JSON.parse(req.body.data);
 
     //TODO: Implement startdate and enddate
     //var starttime = moment(req.body.startdate + req.body.starttime, "YYYY/MM/DDTHH:mm");
     //var endtime = moment(req.body.enddate + req.body.endtime, "YYYY/MM/DDTHH:mm");
-/*
+
     // 1. Save the new event into the events-collection.
-    var newEvent = new Event();
-    newEvent.creationTime = new Date();
+    var newEvent              = new Event();
+    newEvent.creationTime     = new Date();
     newEvent.modificationTime = new Date();
-    newEvent.title = req.body.title;
-    newEvent.content = req.body.content;
-    newEvent.startDate = req.body.startDate;
-    newEvent.endDate = req.body.endDate;
-    newEvent.location = req.body.location;
-    newEvent._calendar = calendarId;
-    newEvent.owner = req.user._id;
+    newEvent.title            = receivedEvent.title;
+    newEvent.content          = receivedEvent.content;
+    newEvent.startDate        = receivedEvent.startDate._d;
+    newEvent.endDate          = receivedEvent.endDate._d;
+    newEvent.location         = receivedEvent.location;
+    newEvent._calendar        = calendarId;
+    newEvent.owner            = req.user._id;
 
     newEvent.save(function(err) {
         if (err) {
@@ -81,16 +79,26 @@ exports.createEvent = function(req, res) {
                     if (err) {
                         console.log(':-( error adding new event');
                         console.log(err);
+                        res.send({ error: 'something blew up' }, 500); // TODO this doesn't quite work :-(
                     } else {
                         console.log(':-) new event successfully added');
 
-                        res.send({data: "success!"}, 200);
+                        res.send(JSON.stringify({data: "success!"}), 200);
                     }
                 });
 
             });
         }
-    });*/
+    });
 
-    
 };
+
+
+var HttpException = function (request, response, message, code) {
+
+  this.request = request;
+  this.response = response;
+  this.message = message;
+  this.code = code || 500;
+
+}
