@@ -42,7 +42,9 @@ exports.getDay = function(req, res) {
  */
 //auth.ensureAuthenticated must be added here!
 exports.createEvent = function(req, res) {
-        
+    
+    console.log(req.user);
+
     var calendarId = req.params.cal_id;
 
     receivedEvent = JSON.parse(req.body.data);

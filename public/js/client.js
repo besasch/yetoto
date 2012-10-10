@@ -1,20 +1,20 @@
-
 /**
  * Event class to create consistend event objects in the whole application
  */
-function Event(eventObject) {
+
+function Event(data) {
     var self = this;
 
-    self.title = eventObject.title;
-    self.content = eventObject.content;
-    self.startDate = eventObject.startDate;
+    self.title = data.title;
+    self.content = data.content;
+    self.startDate = data.startDate;
 
-    self.endDate = eventObject.endDate;
-    self.location = eventObject.location;
-    self._calendar = eventObject._calendar;
-    self.creationTime = eventObject.creationTime;
-    self.modificationTime = eventObject.modificationTime;
-    self.owner = eventObject.owner;
+    self.endDate = data.endDate;
+    self.location = data.location;
+    self._calendar = data._calendar;
+    self.creationTime = data.creationTime;
+    self.modificationTime = data.modificationTime;
+    self.owner = data.owner;
 
     self.startTime = ko.computed(function() {
         return moment(self.startDate).format('HH:mm');
@@ -28,34 +28,45 @@ function Event(eventObject) {
 /**
  * ViewModel to show events to the user
  */
+
 function EventViewModel() {
     var self = this;
 
     // Data
     self.todaysDate = moment(); // Contains today's date
     self.shownDay = ko.observable(); // // Contains the date of the day shown on the frontend
-    self.shownDayFormatted = ko.computed(function(){ // Contains the formatted date
+    self.shownDayFormatted = ko.computed(function() { // Contains the formatted date
         return moment(self.shownDay()).format("DD.MM.YYYY");
     });
 
     self.events = ko.observableArray(); // All the displayed events are in here
-
     self.newEventContainer = ko.observable();
     self.chosenEventContainer = ko.observable();
 
     // Behaviour
+
+
+    /*
+     * Shows a modal to the user for adding a new event
+     */
+    self.goToNewEvent = function() {
+        // Create some dummy data
+        dummy = {title: "", content: "", startDate: moment(), endDate: moment(),
+        location: "location", _calendar: "5072f3092b788f282e000002"};
+        // Write the dummy data into the container
+        self.newEventContainer(new Event(dummy));
+        // Show the modal for the user to modify the data
+        $('#NewEventModal').modal('show');
+    };
 
     /*
      * Adds a new Event to the array and to the server
      * This function gets its data from the container variable newEventContainer
      */
     self.addEvent = function() {
-        console.log("ajax post get event from container");
         // Get the new event out of the container variable
-        newEvent = new Event(self.newEventContainer().title, self.newEventContainer().content,
-            self.newEventContainer().startDate, self.newEventContainer().endDate, self.newEventContainer().location,
-            self.newEventContainer()._calendar);
-        
+        newEvent = new Event(self.newEventContainer());
+
         console.log("ajax post got event!");
         // Empty the container variable
         self.newEventContainer(null);
@@ -65,20 +76,23 @@ function EventViewModel() {
         // Send the event to the server
         $.ajax({
             type: 'POST',
-            url: '/data/'+ newEvent._calendar +'/event',
-            data: {"data": JSON.stringify(newEvent)},
+            url: '/data/' + newEvent._calendar + '/newevent',
+            data: {
+                "data": JSON.stringify(newEvent)
+            },
             dataType: "json",
             success: function() {
                 // Push the event into the view array when done
                 self.events.push(newEvent);
-                // Close Modal when done
-                $('#NewEventModal').modal('hide');
-                console.log("ajax post done");
+
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 alert('error ' + textStatus + " " + errorThrown);
             }
         });
+
+        // Close Modal
+        $('#NewEventModal').modal('hide');
     };
 
     self.goToTomorrow = function() {
@@ -89,14 +103,6 @@ function EventViewModel() {
     self.goToYesterday = function() {
         self.shownDay(moment(self.shownDay()).subtract('days', 1)); // Set shownDate to the next day
         self.loadEvents(); // Load the events again
-    };
-
-    /*
-     * Shows a modal to the user for adding a new event
-     */
-    self.goToNewEvent = function() {
-        self.newEventContainer(new Event("", "" , moment(), moment(), "location", "5072f3092b788f282e000002"));
-        $('#NewEventModal').modal('show');
     };
 
 
@@ -110,11 +116,10 @@ function EventViewModel() {
 
 
     // Background Behaviour
-
     /*
      * Initialize the app with relevant data
      */
-    self.init = function(){
+    self.init = function() {
         self.shownDay(self.todaysDate); // Set shownDate to today's date
         self.loadEvents(); // Load the events
     };
@@ -122,7 +127,7 @@ function EventViewModel() {
     /*
      * Load a date's events from the server
      */
-    self.loadEvents = function(){
+    self.loadEvents = function() {
 
         // Clear the array first
         self.events(null);
@@ -132,29 +137,19 @@ function EventViewModel() {
 
         // Ripp the date parameter apart and build the server Url with it
         year = moment(date).year();
-        month = moment(date).month()+1;
+        month = moment(date).month() + 1;
         day = moment(date).date();
-        serverUrl = "/data/"+year+"/"+month+"/"+day;
+        serverUrl = "/data/" + year + "/" + month + "/" + day;
 
         // Load initial state from server, convert it to instances
         // of the Event class, then populate self.events‚
-        /*$.getJSON(serverUrl, function(allData) {
-            console.log("Ajax Data: " + allData.data.events);
-            var mappedEvents = $.map(allData.data.events, function(item) {
-                console.log("item: "+JSON.parse(item));
-                return new Event(item);
-            });
-            
-            self.events(mappedEvents);
-        });*/
-
         $.ajax({
             url: serverUrl,
             dataType: 'json',
-            success: function(data){
+            success: function(data) {
                 var mappedEvents = [];
 
-                for (var i = 0; i < data.events.length; i++){
+                for(var i = 0; i < data.events.length; i++) {
                     mappedEvents.push(new Event(data.events[i]));
                 }
 
