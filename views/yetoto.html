@@ -83,13 +83,15 @@
         </ol>-->
     </div>
     <button class="btn" data-bind="click: goToNewEvent">Add</button>
-    <button class="btn" data-bind="click: goToYesterday">Yesterday</button>
-    <button class="btn" data-bind="click: goToTomorrow">Tomorrow</button>
+    
+    
     <!-- Day View Information -->
     <div class="page-header">
       <div class="date-controls">
         <h3 data-bind="text: shownDayFormatted"></h3>
       </div>
+      <button class="btn pull-left" data-bind="click: goToYesterday">Yesterday</button>
+      <button class="btn pull-right" data-bind="click: goToTomorrow">Tomorrow</button>
     </div>
 
     <!-- Events -->
@@ -129,20 +131,38 @@
   <div id="NewEventModal" class="modal fade" data-bind="with: newEventContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
-      
+      <h2>Create New Event</h2>
+    </div>
+    <div class="modal-body">
       <div class="control-group">
         <label class="control-label">Title</label>
         <div class="controls">
           <input type="text" placeholder="Event Title" data-bind="value: title">
         </div>
       </div>
-
-    </div>
-    <div class="modal-body">
       <div class="control-group">
-        <label class="control-label">Text</label>
+        <label class="control-label">Date</label>
         <div class="controls">
-          <input type="text" placeholder="Event Text" data-bind="value: content">
+          <input type="text" placeholder="Date" class="span2" data-bind="value: eventDate">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Time</label>
+        <div class="controls">
+          <input type="text" placeholder="starts at..." class="span2 timepicker" data-bind="value: eventStartTime">
+          <input type="text" placeholder="ends at..." class="span2 timepicker" data-bind="value: eventEndTime">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Content</label>
+        <div class="controls">
+          <textarea type="text" placeholder="Event Text" data-bind="value: content"></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Location</label>
+        <div class="controls">
+          <input type="text" placeholder="Location" data-bind="value: location">
         </div>
       </div>
     </div>
@@ -159,6 +179,7 @@
   <script src="js/libs/moment.min.js"></script>
   <script src="js/libs/bootstrap.min.js"></script>
   <script src='js/libs/knockout-2.1.0.js'></script>
+  <script src='js/libs/jquery.timepicker.min.js'></script>
 
   <script src="js/client.js"></script>
 </body>

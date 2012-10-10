@@ -7,9 +7,11 @@ function Event(data) {
 
     self.title = data.title;
     self.content = data.content;
+    
     self.startDate = data.startDate;
 
     self.endDate = data.endDate;
+    
     self.location = data.location;
     self._calendar = data._calendar;
     self.creationTime = data.creationTime;
@@ -23,6 +25,11 @@ function Event(data) {
     self.endTime = ko.computed(function() {
         return moment(self.endDate).format('HH:mm');
     }, self);
+
+    // Data to calculate start and enddate: PUT THIS IN ANOTHER FUNCTION??
+    self.eventDate = ko.observable();
+    self.eventStartTime = ko.observable();
+    self.eventEndTime = ko.observable();
 }
 
 /**
@@ -52,9 +59,11 @@ function EventViewModel() {
     self.goToNewEvent = function() {
         // Create some dummy data
         dummy = {title: "", content: "", startDate: moment(), endDate: moment(),
-        location: "location", _calendar: "5072f3092b788f282e000002"};
+        location: "", _calendar: "5072f3092b788f282e000002"};
         // Write the dummy data into the container
         self.newEventContainer(new Event(dummy));
+        // Initiate timepickers
+        $('.timepicker').timepicker();
         // Show the modal for the user to modify the data
         $('#NewEventModal').modal('show');
     };
@@ -67,11 +76,8 @@ function EventViewModel() {
         // Get the new event out of the container variable
         newEvent = new Event(self.newEventContainer());
 
-        console.log("ajax post got event!");
         // Empty the container variable
         self.newEventContainer(null);
-
-        console.log(JSON.stringify(newEvent));
 
         // Send the event to the server
         $.ajax({
