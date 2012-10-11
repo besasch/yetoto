@@ -3,33 +3,35 @@
  */
 
 function Event(data) {
-    var self = this;
-
-    self.title = data.title;
-    self.content = data.content;
+    var self              = this;
     
-    self.startDate = data.startDate;
-
-    self.endDate = data.endDate;
+    self.title            = data.title;
+    self.content          = data.content;
     
-    self.location = data.location;
-    self._calendar = data._calendar;
-    self.creationTime = data.creationTime;
+    self.startDate        = data.startDate;
+    self.endDate          = data.endDate;
+    
+    self.location         = data.location;
+    self._calendar        = data._calendar;
+    self.creationTime     = data.creationTime;
     self.modificationTime = data.modificationTime;
-    self.owner = data.owner;
-
-    self.startTime = ko.computed(function() {
-        return moment(self.startDate).format('HH:mm');
+    self.owner            = data.owner;
+    
+    self.startTime        = ko.computed(function() {
+    return moment(self.startDate).format('HH:mm');
     }, self);
-
-    self.endTime = ko.computed(function() {
-        return moment(self.endDate).format('HH:mm');
+    
+    self.endTime          = ko.computed(function() {
+    return moment(self.endDate).format('HH:mm');
     }, self);
+    
+    
+    // Data to calculate start and enddate: PUT THIS INTO ANOTHER FUNCTION??
+    self.inputStartDate   = data.inputStartDate;
+    self.inputStartTime   = data.inputStartTime;
+    self.inputEndDate     = data.inputEndDate;
+    self.inputEndTime     = data.inputEndTime;
 
-    // Data to calculate start and enddate: PUT THIS IN ANOTHER FUNCTION??
-    self.eventDate = ko.observable();
-    self.eventStartTime = ko.observable();
-    self.eventEndTime = ko.observable();
 }
 
 /**
@@ -40,30 +42,35 @@ function EventViewModel() {
     var self = this;
 
     // Data
-    self.todaysDate = moment(); // Contains today's date
-    self.shownDay = ko.observable(); // // Contains the date of the day shown on the frontend
+    self.todaysDate        = moment(); // Contains today's date
+    self.shownDay          = ko.observable(); // Contains the date of the day shown on the frontend
     self.shownDayFormatted = ko.computed(function() { // Contains the formatted date
         return moment(self.shownDay()).format("DD.MM.YYYY");
     });
 
-    self.events = ko.observableArray(); // All the displayed events are in here
-    self.newEventContainer = ko.observable();
+    self.events               = ko.observableArray(); // All the displayed events are in here
+    self.newEventContainer    = ko.observable();
     self.chosenEventContainer = ko.observable();
 
     // Behaviour
-
-
     /*
      * Shows a modal to the user for adding a new event
      */
     self.goToNewEvent = function() {
+        
         // Create some dummy data
         dummy = {title: "", content: "", startDate: moment(), endDate: moment(),
-        location: "", _calendar: "5072f3092b788f282e000002"};
+        location: "", _calendar: "5072f3092b788f282e000002", inputStartDate: ""};
+        
         // Write the dummy data into the container
         self.newEventContainer(new Event(dummy));
-        // Initiate timepickers
-        $('.timepicker').timepicker();
+        console.log(self.newEventContainer());
+        
+        // Initiate timepickers and datepickers
+        $('.init-timepicker').timepicker({ 'timeFormat': 'H:i' });
+        $('.init-datepicker').datepicker({ 'dateFormat': 'dd.mm.yy' }); //jquery-ui datepicker
+        //$('.init-datepicker').datepicker({ 'format': 'dd.mm.yy' }); //bootstrap datepicker
+        
         // Show the modal for the user to modify the data
         $('#NewEventModal').modal('show');
     };
@@ -74,10 +81,15 @@ function EventViewModel() {
      */
     self.addEvent = function() {
         // Get the new event out of the container variable
-        newEvent = new Event(self.newEventContainer());
-
+        newEvent           = new Event(self.newEventContainer());
+        
         // Empty the container variable
         self.newEventContainer(null);
+        
+        // Calculate start and end date accorrding to the users inputs
+        newEvent.startDate = moment(newEvent.inputStartDate+" "+newEvent.inputStartTime, "DD.MM.YYYY H:mm");
+        newEvent.endDate   = moment(newEvent.inputEndDate+" "+newEvent.inputEndTime, "DD.MM.YYYY H:mm");
+
 
         // Send the event to the server
         $.ajax({
@@ -89,7 +101,10 @@ function EventViewModel() {
             dataType: "json",
             success: function() {
                 // Push the event into the view array when done
-                self.events.push(newEvent);
+                
+                if(moment(newEvent.startDate).format('DD.MM.YYYY') == moment(shownDay).format('DD.MM.YYYY')){
+                    self.events.push(newEvent);
+                }
 
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -101,39 +116,39 @@ function EventViewModel() {
         $('#NewEventModal').modal('hide');
     };
 
-    self.goToTomorrow = function() {
-        self.shownDay(moment(self.shownDay()).add('days', 1)); // Set shownDate to the next day
-        self.loadEvents(); // Load the events again
+    self.goToTomorrow  = function() {
+    self.shownDay(moment(self.shownDay()).add('days', 1)); // Set shownDate to the next day
+    self.loadEvents(); // Load the events again
     };
-
+    
     self.goToYesterday = function() {
-        self.shownDay(moment(self.shownDay()).subtract('days', 1)); // Set shownDate to the next day
-        self.loadEvents(); // Load the events again
+    self.shownDay(moment(self.shownDay()).subtract('days', 1)); // Set shownDate to the next day
+    self.loadEvents(); // Load the events again
     };
-
-
+    
+    
     /*
-     * Shows a modal to the user containing all data for a specific event
-     */
-    self.goToEvent = function(chosenEvent) {
-        self.chosenEventContainer(chosenEvent);
-        $('#ShowEventModal').modal('show');
+    * Shows a modal to the user containing all data for a specific event
+    */
+    self.goToEvent     = function(chosenEvent) {
+    self.chosenEventContainer(chosenEvent);
+    $('#ShowEventModal').modal('show');
     };
-
-
+    
+    
     // Background Behaviour
     /*
-     * Initialize the app with relevant data
-     */
-    self.init = function() {
-        self.shownDay(self.todaysDate); // Set shownDate to today's date
-        self.loadEvents(); // Load the events
+    * Initialize the app with relevant data
+    */
+    self.init          = function() {
+    self.shownDay(self.todaysDate); // Set shownDate to today's date
+    self.loadEvents(); // Load the events
     };
 
     /*
      * Load a date's events from the server
      */
-    self.loadEvents = function() {
+    self.loadEvents    = function() {
 
         // Clear the array first
         self.events(null);

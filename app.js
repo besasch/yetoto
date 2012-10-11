@@ -19,7 +19,6 @@ app.configure(function(){
       };
     }
   });
-  app.use(express.compiler({ src : __dirname + '/public', enable: ['less']}));
   app.use(express.cookieParser());
   app.use(express.bodyParser({ keepExtensions: true, uploadDir: __dirname + "/public" + CONFIG.images.dir }));
   app.use(express.methodOverride());

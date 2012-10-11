@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Le styles -->
-    <link rel="stylesheet" href="styles/bootstrap.css">
+    <link rel="stylesheet" href="styles/main.css">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -86,12 +86,17 @@
     
     
     <!-- Day View Information -->
-    <div class="page-header">
+    <div id="dayview-information">
+
+      <button class="btn pull-left" data-bind="click: goToYesterday"><i class="icon-circle-arrow-left"></i> </button>
+      <button class="btn pull-right" data-bind="click: goToTomorrow"> <i class="icon-circle-arrow-right"></i></button>
+      
       <div class="date-controls">
         <h3 data-bind="text: shownDayFormatted"></h3>
       </div>
-      <button class="btn pull-left" data-bind="click: goToYesterday">Yesterday</button>
-      <button class="btn pull-right" data-bind="click: goToTomorrow">Tomorrow</button>
+
+
+
     </div>
 
     <!-- Events -->
@@ -111,10 +116,8 @@
    
   </div>
 
-  <textarea name="events" data-bind="value: ko.toJSON(events)" ></textarea>
-
   <!-- Modal Show Event -->
-  <div id="ShowEventModal" class="modal fade" data-bind="with: chosenEventContainer">
+  <div id="ShowEventModal" class="modal fade hidden" data-bind="with: chosenEventContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
       <h3 data-bind="text: title"><!-- le title --></h3>
@@ -128,7 +131,7 @@
   </div>
 
   <!-- Modal New Event -->
-  <div id="NewEventModal" class="modal fade" data-bind="with: newEventContainer">
+  <div id="NewEventModal" class="modal fade hidden" data-bind="with: newEventContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
       <h2>Create New Event</h2>
@@ -137,32 +140,33 @@
       <div class="control-group">
         <label class="control-label">Title</label>
         <div class="controls">
-          <input type="text" placeholder="Event Title" data-bind="value: title">
+          <input type="text" placeholder="What is going to happen..." data-bind="value: title">
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label">Date</label>
+        <label class="control-label">From</label>
         <div class="controls">
-          <input type="text" placeholder="Date" class="span2" data-bind="value: eventDate">
+          <input type="text" placeholder="Starts at..." class="span2 init-timepicker" data-bind="value: inputStartTime">
+          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: inputStartDate" >
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label">Time</label>
+        <label class="control-label">Until</label>
         <div class="controls">
-          <input type="text" placeholder="starts at..." class="span2 timepicker" data-bind="value: eventStartTime">
-          <input type="text" placeholder="ends at..." class="span2 timepicker" data-bind="value: eventEndTime">
+          <input type="text" placeholder="Ends at..." class="span2 init-timepicker" data-bind="value: inputEndTime">
+          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: inputEndDate">
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label">Content</label>
+        <label class="control-label">Description</label>
         <div class="controls">
-          <textarea type="text" placeholder="Event Text" data-bind="value: content"></textarea>
+          <textarea type="text" placeholder="Additional Information..." class="span5" data-bind="value: content"></textarea>
         </div>
       </div>
       <div class="control-group">
         <label class="control-label">Location</label>
         <div class="controls">
-          <input type="text" placeholder="Location" data-bind="value: location">
+          <input type="text" placeholder="Where it will happen..." data-bind="value: location">
         </div>
       </div>
     </div>
@@ -170,6 +174,22 @@
       <button class="btn" data-bind="click: $root.addEvent">Save Event</button>
     </div>
   </div>
+
+  <!-- developer box -->
+
+  <button id="developer-button" class="btn">DEV</button>
+
+
+
+  <div id="developer-box" class="hidden">
+    <h3>Developer Area</h3>
+
+    <label>Events Array:</label>
+    <textarea style="width:400px; height:180px;" data-bind="value: ko.toJSON(events)" ></textarea>
+
+  </div>
+
+
 
   <!-- le javascript -->
   <!-- The missing protocol means that it will match the current protocol, either http or https. If running locally, we use the local jQuery. -->
@@ -179,8 +199,25 @@
   <script src="js/libs/moment.min.js"></script>
   <script src="js/libs/bootstrap.min.js"></script>
   <script src='js/libs/knockout-2.1.0.js'></script>
+
+
+  <!--<script src='js/libs/bootstrap-datepicker.js'></script>-->
   <script src='js/libs/jquery.timepicker.min.js'></script>
+  <script src="js/libs/jquery-ui-1.9.0.datepicker.js"></script>
 
   <script src="js/client.js"></script>
+
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+
+      $('#developer-box').hide();
+
+      $('#developer-button').click(function(){
+        $('#developer-box').toggle();
+      });
+    });
+  </script>
+
 </body>
 </html>
