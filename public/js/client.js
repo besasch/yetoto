@@ -2,43 +2,8 @@
  * Event class to create consistend event objects in the whole application
  */
 
-function Event(data) {
-    var self              = this;
-    
-    self.title            = data.title;
-    self.content          = data.content;
-    
-    self.startDate        = data.startDate;
-    self.endDate          = data.endDate;
-    
-    self.location         = data.location;
-    self._calendar        = data._calendar;
-    self.creationTime     = data.creationTime;
-    self.modificationTime = data.modificationTime;
-    self.owner            = data.owner;
-    
-    self.startTime        = ko.computed(function() {
-    return moment(self.startDate).format('HH:mm');
-    }, self);
-    
-    self.endTime          = ko.computed(function() {
-    return moment(self.endDate).format('HH:mm');
-    }, self);
-    
-    
-    // Data to calculate start and enddate: PUT THIS INTO ANOTHER FUNCTION??
-    self.inputStartDate   = data.inputStartDate;
-    self.inputStartTime   = data.inputStartTime;
-    self.inputEndDate     = data.inputEndDate;
-    self.inputEndTime     = data.inputEndTime;
-
-}
-
-/**
- * ViewModel to show events to the user
- */
-
-function EventViewModel() {
+function ApplicationViewModel(){
+	
     var self = this;
 
     // Data
@@ -52,15 +17,19 @@ function EventViewModel() {
     self.newEventContainer    = ko.observable();
     self.chosenEventContainer = ko.observable();
 
+    self.calendars  = ko.observableArray();
+    
+
     // Behaviour
     /*
      * Shows a modal to the user for adding a new event
      */
-    self.goToNewEvent = function() {
+    self.goToNewEvent = function(calendars) {
         
+        console.log("Calendar ID:" + calendars._id);
         // Create some dummy data
         dummy = {title: "", content: "", startDate: moment(), endDate: moment(),
-        location: "", _calendar: "5072f3092b788f282e000002", inputStartDate: ""};
+        location: "", _calendar: calendars._id, inputStartDate: ""};
         
         // Write the dummy data into the container
         self.newEventContainer(new Event(dummy));
@@ -117,13 +86,13 @@ function EventViewModel() {
     };
 
     self.goToTomorrow  = function() {
-    self.shownDay(moment(self.shownDay()).add('days', 1)); // Set shownDate to the next day
-    self.loadEvents(); // Load the events again
+        self.shownDay(moment(self.shownDay()).add('days', 1)); // Set shownDate to the next day
+        self.loadEvents(); // Load the events again
     };
     
     self.goToYesterday = function() {
-    self.shownDay(moment(self.shownDay()).subtract('days', 1)); // Set shownDate to the next day
-    self.loadEvents(); // Load the events again
+        self.shownDay(moment(self.shownDay()).subtract('days', 1)); // Set shownDate to the next day
+        self.loadEvents(); // Load the events again
     };
     
     
@@ -131,8 +100,8 @@ function EventViewModel() {
     * Shows a modal to the user containing all data for a specific event
     */
     self.goToEvent     = function(chosenEvent) {
-    self.chosenEventContainer(chosenEvent);
-    $('#ShowEventModal').modal('show');
+        self.chosenEventContainer(chosenEvent);
+        $('#ShowEventModal').modal('show');
     };
     
     
@@ -140,9 +109,9 @@ function EventViewModel() {
     /*
     * Initialize the app with relevant data
     */
-    self.init          = function() {
-    self.shownDay(self.todaysDate); // Set shownDate to today's date
-    self.loadEvents(); // Load the events
+    self.EventsInit          = function() {
+        self.shownDay(self.todaysDate); // Set shownDate to today's date
+        self.loadEvents(); // Load the events
     };
 
     /*
@@ -163,7 +132,7 @@ function EventViewModel() {
         serverUrl = "/data/" + year + "/" + month + "/" + day;
 
         // Load initial state from server, convert it to instances
-        // of the Event class, then populate self.events‚
+        // of the Event class, then populate self.eventsâ€š
         $.ajax({
             url: serverUrl,
             dataType: 'json',
@@ -178,10 +147,91 @@ function EventViewModel() {
             }
         });
 
+    };    
+
+    self.CalendarsInit  = function(){
+        serverUrl = "/data/userCalendars";
+    
+        $.ajax({
+                url: serverUrl,
+                dataType: 'json',
+                success: function(data) {
+                   var mappedCalendars = [];
+
+                    for(var i = 0; i < data.userCalendars.length; i++) {
+                        mappedCalendars.push(new Calendar(data.userCalendars[i], true));
+                    }
+
+                    for(var j = 0; j < data.subscriptions.length; j++) {
+                        mappedCalendars.push(new Calendar(data.subscriptions[j], false));
+                    }
+                    self.calendars(mappedCalendars);
+                }
+            });
     };
 
-    // Initialize the EventsViewModel
-    self.init();
+    // Initialize the ViewModal
+    self.EventsInit();    
+    self.CalendarsInit();
+
+
+    
+}   
+
+function Event(data) {
+    var self              = this;
+    
+    self.title            = data.title;
+    self.content          = data.content;
+    
+    self.startDate        = data.startDate;
+    self.endDate          = data.endDate;
+    
+    self.location         = data.location;
+    self._calendar        = data._calendar;
+    self.creationTime     = data.creationTime;
+    self.modificationTime = data.modificationTime;
+    self.owner            = data.owner;
+    
+    self.startTime        = ko.computed(function() {
+    return moment(self.startDate).format('HH:mm');
+    }, self);
+    
+    self.endTime          = ko.computed(function() {
+    return moment(self.endDate).format('HH:mm');
+    }, self);
+    
+    
+    // Data to calculate start and enddate: PUT THIS INTO ANOTHER FUNCTION??
+    self.inputStartDate   = data.inputStartDate;
+    self.inputStartTime   = data.inputStartTime;
+    self.inputEndDate     = data.inputEndDate;
+    self.inputEndTime     = data.inputEndTime;
+
 }
 
-ko.applyBindings(new EventViewModel());
+/**
+ * ViewModel to show events to the user
+ */
+
+
+
+
+// 1.) Am Anfang: Alle abonniereten und eigenen Kalender laden
+	
+function Calendar(data, isOwner) {
+	var self = this;
+	
+    self._id        = data._id;
+	self.title 		= data.title;
+    self.picture	= data.picture;
+    self.isOwner    = isOwner;
+    console.log("self._id: " + self._id + " self.title "+self.title +" self.picture "+self.picture + " self.isOwner " + self.isOwner);
+   
+}
+
+
+
+
+ko.applyBindings(new ApplicationViewModel());
+

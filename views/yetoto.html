@@ -53,37 +53,31 @@
 
     <!-- ActionBar -->
     <div id="actionBar" style="padding-bottom: 100px;">
-        <!--<ol class="unstyled">
-            <li class="dropdown" style="float: left;">
+          <li class="dropdown" style="float: left; list-style: none;">
                 <a href="/calendars/new">
                     <button class="btn btn-info" style="height: 80px;  width: 32px;">
                         <i class="icon-plus icon-white"></i>
                     </button>
                 </a>
             </li>
-            <% for (var i=0; i < calendars.length; i++) { %>
-            <li class="dropdown" style= "float: left; margin-left: 5px;">
+        <ol class="unstyled" data-bind="foreach: calendars" >
+            
+            <li class="dropdown" id="calendars" style= "float: left; margin-left: 5px;">
                 <button class="dropdown-toggle thumbnail" data-toggle="dropdown">
-                    <img src="<%= calendars[i].picture %>" style="width: 70px; height: 70px;">
+                    <img data-bind="attr: { src: picture }" style="width: 70px; height: 70px;">
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="/calendars/<%= calendars[i]._id %>"><i class="icon-info-sign"></i> <%= calendars[i].title %></a></li>
-                    <li><a href="<%= calendars[i]._id %>" class="addEvent"><i class="icon-comment"></i> Add Event</a></li>
+                    <li><a href=""><i class="icon-info-sign"></i> <span data-bind="text: title"></span></a></li>
+                    <li data-bind="visible: isOwner"><a href="#" class="addEvent" data-bind ="click: $root.goToNewEvent"><i class="icon-comment"></i> Add Event</a></li>
                     <li class="divider"></li>
                     <li><a href="#"><i class="icon-ban-circle"></i> Hide</a></li>
-                    <li><a href="#"><i class="icon-minus"></i> Unsubscribe</a></li>
-                    <li class="divider"></li>
-                    <li><a href="<%= calendars[i]._id %>" class="deleteCalendar"><i class="icon-minus"></i> Delete Calendar</a></li>
-                    <form id="newCalForm<%= calendars[i]._id %>" action="/calendars/<%= calendars[i]._id %>" method="post">
-                        <input type="hidden" name="_method" value="delete" />
-                    </form>  
+                    <li class="divider"></li>                    
+                    <li data-bind="visible: !isOwner"><a href="#"><i class="icon-minus"></i> Unsubscribe</a></li>
+                    <li data-bind="visible: isOwner"><a href=""><i class="icon-minus"></i> Delete Calendar</a></li> 
                 </ul>
             </li>
-            <% } %>
-        </ol>-->
-    </div>
-    <button class="btn" data-bind="click: goToNewEvent">Add</button>
-    
+        </ol>
+    </div>    
     
     <!-- Day View Information -->
     <div id="dayview-information">

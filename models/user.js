@@ -24,6 +24,15 @@ var UserSchema = new Schema({
     modificationTime: {type: Date, default: Date.now}
 });
 
+UserSchema.static('getUserCalendars', function (userID, cb) {
+
+	return this.findById(userID, 'userCalendars subscriptions')
+        .populate('userCalendars')
+		.populate('subscriptions')
+        .exec(cb);
+});
+
+
 
 var User = mongoose.model('user', UserSchema);
 
