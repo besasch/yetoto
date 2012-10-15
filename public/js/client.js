@@ -169,6 +169,20 @@ function ApplicationViewModel(){
                 }
             });
     };
+    self.hideCalendar = function(calendars){
+        calendars.isHidden(true);
+        for(var i = 0; i < self.events().length; i++) {
+                if(calendars._id == self.events()[i]._calendar._id)
+                    self.events()[i].isHidden(true);
+        }
+    }
+    self.unhideCalendar = function(calendars){
+        calendars.isHidden(false);
+        for(var i = 0; i < self.events().length; i++) {
+                if(calendars._id == self.events()[i]._calendar._id)
+                    self.events()[i].isHidden(false);
+        }
+    }
 
     // Initialize the ViewModal
     self.EventsInit();    
@@ -208,6 +222,8 @@ function Event(data) {
     self.inputEndDate     = data.inputEndDate;
     self.inputEndTime     = data.inputEndTime;
 
+    self.isHidden         = ko.observable(false);
+    console.log("est: " + self.isHidden());
 }
 
 /**
@@ -225,8 +241,8 @@ function Calendar(data, isOwner) {
     self._id        = data._id;
 	self.title 		= data.title;
     self.picture	= data.picture;
-    self.isOwner    = isOwner;
-    console.log("self._id: " + self._id + " self.title "+self.title +" self.picture "+self.picture + " self.isOwner " + self.isOwner);
+    self.isOwner    = ko.observable(isOwner);
+    self.isHidden   = ko.observable(false);
    
 }
 

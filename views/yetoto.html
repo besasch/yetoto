@@ -70,10 +70,11 @@
                     <li><a href=""><i class="icon-info-sign"></i> <span data-bind="text: title"></span></a></li>
                     <li data-bind="visible: isOwner"><a href="#" class="addEvent" data-bind ="click: $root.goToNewEvent"><i class="icon-comment"></i> Add Event</a></li>
                     <li class="divider"></li>
-                    <li><a href="#"><i class="icon-ban-circle"></i> Hide</a></li>
+                    <li data-bind="visible: !isHidden()"><a href="#" data-bind="click: $root.hideCalendar"><i class="icon-ban-circle"></i> Hide</a></li>
+                    <li data-bind="visible: isHidden()"><a href="#" data-bind="click: $root.unhideCalendar"><i class="icon-ban-circle"></i> Unhide</a></li>
                     <li class="divider"></li>                    
-                    <li data-bind="visible: !isOwner"><a href="#"><i class="icon-minus"></i> Unsubscribe</a></li>
-                    <li data-bind="visible: isOwner"><a href=""><i class="icon-minus"></i> Delete Calendar</a></li> 
+                    <li data-bind="visible: !isOwner()"><a href="#"><i class="icon-minus"></i> Unsubscribe</a></li>
+                    <li data-bind="visible: isOwner()"><a href="#"><i class="icon-minus"></i> Delete Calendar</a></li> 
                 </ul>
             </li>
         </ol>
@@ -95,7 +96,7 @@
 
     <!-- Events -->
     <div id="events" data-bind="foreach: events">
-      <div class="event">
+      <div class="event" data-bind="visible: !isHidden()">
         <a href="" data-bind="click: $root.goToEvent"><span class="fulllink"></span></a>
         <img src="img/photo.jpg">
         <span class="time" data-bind="text: startTime"></span>
