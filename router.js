@@ -1,4 +1,4 @@
-var calendarController = require('./controllers/calendar');
+var calendarController = require('./controllers/calendarController');
 var publicController = require('./controllers/publicController');
 var eventController = require('./controllers/eventController');
 var userController = require('./controllers/userController');
@@ -37,7 +37,9 @@ module.exports = function(app){
 	app.post('/data/:cal_id/newevent', eventController.createEvent);
 
 
-	app.get('/data/userCalendars', userController.getUserCalendars); 
+	app.get('/data/userCalendars', userController.getUserCalendars);
+
+	app.get('/search/:term', calendarController.searchCalendars);
 
 	// DEVELOPMENT
 

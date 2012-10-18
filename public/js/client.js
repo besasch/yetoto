@@ -147,7 +147,7 @@ function ApplicationViewModel(){
             }
         });
 
-    };    
+    };
 
     self.CalendarsInit  = function(){
         serverUrl = "/data/userCalendars";
@@ -169,28 +169,71 @@ function ApplicationViewModel(){
                 }
             });
     };
+
     self.hideCalendar = function(calendars){
         calendars.isHidden(true);
         for(var i = 0; i < self.events().length; i++) {
                 if(calendars._id == self.events()[i]._calendar._id)
                     self.events()[i].isHidden(true);
         }
-    }
+    };
+
     self.unhideCalendar = function(calendars){
         calendars.isHidden(false);
         for(var i = 0; i < self.events().length; i++) {
                 if(calendars._id == self.events()[i]._calendar._id)
                     self.events()[i].isHidden(false);
         }
-    }
+    };
+
+    // SEARCH
+
+    self.searchTerm = ko.observable();
+    self.searchResults = ko.observableArray();
+
+    self.searchTerm.subscribe(function () {
+
+        $('.dropdown-toggle').dropdown();
+
+        if(self.searchTerm().length > 2){
+            
+            serverUrl = "/search/" + self.searchTerm();
+
+            $('#search-form').addClass('open');
+
+            $.ajax({
+            url: serverUrl,
+            dataType: 'json',
+            success: function(data) {
+
+                    if (data.calendarResults.length > 0){
+
+                        var mappedCalendars = [];
+
+                        for(var i = 0; i < data.calendarResults.length; i++) {
+                            mappedCalendars.push(new Calendar(data.calendarResults[i]));
+                        }
+                        self.searchResults(mappedCalendars);
+    
+                    } else {
+
+                        self.searchResults([]);
+
+                    }
+                }
+            });
+        } else {
+            self.searchResults([]);
+            $('#search-form').removeClass('open');
+        }
+
+    });
 
     // Initialize the ViewModal
-    self.EventsInit();    
+    self.EventsInit();
     self.CalendarsInit();
-
-
     
-}   
+}
 
 function Event(data) {
     var self              = this;
@@ -238,12 +281,13 @@ function Event(data) {
 function Calendar(data, isOwner) {
 	var self = this;
 	
-    self._id        = data._id;
-	self.title 		= data.title;
-    self.picture	= data.picture;
-    self.isOwner    = ko.observable(isOwner);
-    self.isHidden   = ko.observable(false);
-   
+    self._id         = data._id;
+    self.title       = data.title;
+    self.picture     = data.picture;
+    self.description = data.description;
+    self.isOwner     = ko.observable(isOwner);
+    self.isHidden    = ko.observable(false);
+    
 }
 
 

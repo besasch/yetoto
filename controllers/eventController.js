@@ -15,8 +15,6 @@ exports.getDay = function(req, res) {
     var month = req.params.month;
     var day = req.params.day;
 
-    console.log('date: '+year+'.'+month+'.'+day);
-
     if(!moment(year + "-" + month + "-" + day, "YYYY-MM-DD").isValid()){
 
         res.redirect('/');
@@ -43,8 +41,6 @@ exports.getDay = function(req, res) {
 //auth.ensureAuthenticated must be added here!
 exports.createEvent = function(req, res) {
     
-    console.log(req.user);
-
     var calendarId = req.params.cal_id;
 
     receivedEvent = JSON.parse(req.body.data);
@@ -94,13 +90,3 @@ exports.createEvent = function(req, res) {
     });
 
 };
-
-
-var HttpException = function (request, response, message, code) {
-
-  this.request = request;
-  this.response = response;
-  this.message = message;
-  this.code = code || 500;
-
-}

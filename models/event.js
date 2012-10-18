@@ -25,8 +25,8 @@ EventSchema.static('getAllEventsByDate', function (inputDate, cb) {
 	var from = new Date(inputDate[0], inputDate[1] - 1, inputDate[2], 0, 0, 0);
     var until = new Date(inputDate[0], inputDate[1] - 1 , inputDate[2], 23, 59, 59);
 
-console.log('from: '+from);
-console.log('until: '+until);
+    //console.log('from: '+from);
+    //console.log('until: '+until);
 
 	return this.where('startDate').gte(from).lte(until)
         .sort('startDate')

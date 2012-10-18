@@ -24,6 +24,13 @@ CalendarSchema.static('getCalendarData', function (id, cb) {
         .exec(cb);
 });
 
+CalendarSchema.static('searchCalendars', function (term, cb) {
+
+    return this.find({title: new RegExp(term, 'i')})
+        .populate('owner')
+        .exec(cb);
+});
+
 
 var Calendar = mongoose.model('calendar', CalendarSchema);
 
