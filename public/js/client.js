@@ -104,8 +104,6 @@ function ApplicationViewModel(){
         $('#ShowEventModal').modal('show');
     };
     
-    
-    // Background Behaviour
     /*
     * Initialize the app with relevant data
     */
@@ -197,7 +195,7 @@ function ApplicationViewModel(){
 
         if(self.searchTerm().length > 2){
             
-            serverUrl = "/search/" + self.searchTerm();
+            serverUrl = "/data/search/" + self.searchTerm();
 
             $('#search-form').addClass('open');
 
@@ -228,6 +226,46 @@ function ApplicationViewModel(){
         }
 
     });
+
+    // Calendar
+    self.chosenCalendarContainer = ko.observable();
+
+    self.goToCalendar     = function(chosenCalendar) {
+        self.chosenCalendarContainer(chosenCalendar);
+        $('#ShowCalendarModal').modal('show');
+    };
+
+    self.subscribeCalendar = function() {
+        var cal = self.chosenCalendarContainer();
+
+        var serverUrl = '/data/subscribe/' + cal._id;
+
+        $.ajax({
+            url: serverUrl,
+            dataType: 'json',
+            success: function(data) {
+                self.EventsInit();
+                self.calendars.push(cal);
+            }
+        });
+    };
+
+    self.unsubscribeCalendar = function(chosenCalendar) {
+
+        var serverUrl = '/data/unsubscribe/' + chosenCalendar._id;
+
+        $.ajax({
+            url: serverUrl,
+            dataType: 'json',
+            success: function(data) {
+                self.EventsInit();
+                self.calendars.remove(chosenCalendar);
+            }
+        });
+
+    };
+
+
 
     // Initialize the ViewModal
     self.EventsInit();

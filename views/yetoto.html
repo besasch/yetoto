@@ -46,7 +46,7 @@
               <input type="text" class="search-query dropdown-toggle" placeholder="Search" data-bind="value: searchTerm, valueUpdate: 'keyup'">
               <ul class="dropdown-menu" style="padding: 10px 10px 5px 10px;" data-bind="foreach: searchResults">
                 <li style="margin-bottom: 5px;">
-                  <a href="" >
+                  <a href="" data-bind="click: $root.goToCalendar">
                     <img data-bind="attr: { src: picture }" style="width: 50px; height: 50px; margin-right: 10px;">
                     <span data-bind="text: title"></span>
                   </a>
@@ -75,13 +75,13 @@
                     <img data-bind="attr: { src: picture }" style="width: 70px; height: 70px;">
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href=""><i class="icon-info-sign"></i> <span data-bind="text: title"></span></a></li>
+                    <li><a href="" data-bind="click: $root.goToCalendar"><i class="icon-info-sign"></i> <span data-bind="text: title"></span></a></li>
                     <li data-bind="visible: isOwner"><a href="#" class="addEvent" data-bind ="click: $root.goToNewEvent"><i class="icon-comment"></i> Add Event</a></li>
                     <li class="divider"></li>
                     <li data-bind="visible: !isHidden()"><a href="#" data-bind="click: $root.hideCalendar"><i class="icon-ban-circle"></i> Hide</a></li>
                     <li data-bind="visible: isHidden()"><a href="#" data-bind="click: $root.unhideCalendar"><i class="icon-ban-circle"></i> Unhide</a></li>
                     <li class="divider"></li>                    
-                    <li data-bind="visible: !isOwner()"><a href="#"><i class="icon-minus"></i> Unsubscribe</a></li>
+                    <li data-bind="visible: !isOwner()"><a href="" data-bind="click: $root.unsubscribeCalendar"><i class="icon-minus"></i> Unsubscribe</a></li>
                     <li data-bind="visible: isOwner()"><a href="#"><i class="icon-minus"></i> Delete Calendar</a></li> 
                 </ul>
             </li>
@@ -97,8 +97,6 @@
       <div class="date-controls">
         <h3 data-bind="text: shownDayFormatted"></h3>
       </div>
-
-
 
     </div>
 
@@ -130,6 +128,24 @@
     </div>
     <div class="modal-footer">
       <!-- le buttons -->
+    </div>
+  </div>
+
+  <!-- Modal Calendar Event -->
+  <div id="ShowCalendarModal" class="modal fade hide" data-bind="with: chosenCalendarContainer">
+    <div class="modal-header" >
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <div class="pull-left" style="margin-right: 10px;">
+        <img data-bind="attr: { src: picture }" class="pull-left" style="width: 50px; height: 50px;">
+      </div>
+      <h3 data-bind="text: title"><!-- le title --></h3>
+      <p data-bind="text: description"></p>
+    </div>
+    <div class="modal-body">
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn pull-right" data-bind="click: $root.subscribeCalendar">Subscribe</button>
     </div>
   </div>
 
@@ -190,13 +206,21 @@
     <h3>Developer Area</h3>
 
     <div class="span5">
-      <label>Events:</label>
-      <textarea style="width:350px; height:180px;" data-bind="value: ko.toJSON(events)" ></textarea>
+      <label>Events Array:</label>
+      <textarea style="width:350px; height:180px;" data-bind="text: ko.toJSON(events)" ></textarea>
     </div>
 
     <div class="span5" style="margin-left: 10px;">
-      <label>Search Results:</label>
-      <textarea style="width:350px; height:180px;" data-bind="value: ko.toJSON(searchResults)" ></textarea>
+      <label>Search Results Array:</label>
+      <textarea style="width:350px; height:180px;" data-bind="text: ko.toJSON(searchResults)" ></textarea>
+    </div>
+
+    <div class="span5" style="margin-left: 10px;">
+      <label>Chosen Event Container:</label>
+      <textarea style="width:350px; height:80px;" data-bind="text: ko.toJSON(chosenEventContainer)"></textarea>
+      <br>
+      <label>Chosen Calendar Container:</label>
+      <textarea style="width:350px; height:80px;" data-bind="text: ko.toJSON(chosenCalendarContainer)"></textarea>
     </div>
 
   </div>

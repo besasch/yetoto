@@ -39,7 +39,11 @@ module.exports = function(app){
 
 	app.get('/data/userCalendars', userController.getUserCalendars);
 
-	app.get('/search/:term', calendarController.searchCalendars);
+	app.get('/data/search/:term', calendarController.searchCalendars);
+
+	app.get('/data/subscribe/:calId', userController.subscribeCalendar);
+
+	app.get('/data/unsubscribe/:calId', userController.unsubscribeCalendar);
 
 	// DEVELOPMENT
 
