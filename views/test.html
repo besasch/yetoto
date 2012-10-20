@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>jQuery File Upload Example</title>
+</head>
+    <link rel="stylesheet" href="styles/main.css">
+
+<body>
+	  <script src="js/libs/bootstrap.min.js"></script>
+
+          <a href="#" id="fileSelect"><i class="icon-pencil" id="imageupload" width="14" height="14" style="background-color: white; opacity: 0.5; margin: 56px 0px 0px -14px; position: absolute; z-index: 1090;"></i>blabljabjsdölfajsdfölj</a>
+          <input type="file" id="fileElem" accept="image/*" style="display:none" onchange="handleFiles(this.files)">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="js/libs/jquery-1.7.2.min.js"><\/script>')</script>
+
+    <script type="text/javascript">
+		var fileSelect = document.getElementById("fileSelect"),
+		  fileElem = document.getElementById("fileElem");
+		 
+		fileSelect.addEventListener("click", function (e) {
+		  if (fileElem) {
+		    fileElem.click();
+		  }
+		  e.preventDefault(); // prevent navigation to "#"
+		}, false);
+    </script>
+
+</body>
+
+</html>

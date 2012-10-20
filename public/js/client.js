@@ -17,13 +17,93 @@ function ApplicationViewModel(){
     self.newEventContainer    = ko.observable();
     self.chosenEventContainer = ko.observable();
 
-    self.calendars  = ko.observableArray();
-    
+
+
+    self.calendars              = ko.observableArray();
+    self.newCalendarContainer   = ko.observable();
+
 
     // Behaviour
     /*
      * Shows a modal to the user for adding a new event
      */
+    self.CalendarsInit  = function(){
+
+        serverUrl = "/data/userCalendars";
+    
+        $.ajax({
+                url: serverUrl,
+                dataType: 'json',
+                success: function(data) {
+                   var mappedCalendars = [];
+
+                    for(var i = 0; i < data.userCalendars.length; i++) {
+                        mappedCalendars.push(new Calendar(data.userCalendars[i], true));
+                    }
+
+                    for(var j = 0; j < data.subscriptions.length; j++) {
+                        mappedCalendars.push(new Calendar(data.subscriptions[j], false));
+                    }
+                    self.calendars(mappedCalendars);
+
+                }
+            });
+    };
+    
+    self.goToNewCalendar = function() {
+        
+        // Create some dummy data
+        dummy = {title: "", description: ""};
+        
+        // Write the dummy data into the container
+        self.newCalendarContainer(new Calendar(dummy));
+        console.log(self.newCalendarContainer());
+       
+        // Show the modal for the user to modify the data
+        $('#NewCalendarModal').modal('show');
+
+
+        //Image Handling
+        var fileSelect = document.getElementById("fileSelect"),
+          fileElem = document.getElementById("fileElem");
+         
+
+        fileSelect.addEventListener("click", function (e) {
+          if (fileElem) {
+            fileElem.click();
+          }
+          e.preventDefault(); // prevent navigation to "#"
+        }, false);
+    };
+    self.addCalendar = function() {
+        // Get the new Calendar out of the container variable
+        newCalendar          = new Calendar(self.newCalendarContainer());
+        
+        // Empty the container variable
+        self.newCalendarContainer(null);
+
+
+        // Send the event to the server
+        $.ajax({
+            type: 'POST',
+            url: '/data/newcalendar',
+            data: {
+                "data": JSON.stringify(newCalendar)
+            },
+            dataType: "json",
+            success: function() {
+                // Push the Calendar into the view array when done
+                self.calendars.push(newCalendar);
+                
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('error ' + textStatus + " " + errorThrown);
+            }
+        });
+
+        // Close Modal
+        $('#NewCalendarModal').modal('hide');
+    };
     self.goToNewEvent = function(calendars) {
         
         console.log("Calendar ID:" + calendars._id);
@@ -48,6 +128,7 @@ function ApplicationViewModel(){
      * Adds a new Event to the array and to the server
      * This function gets its data from the container variable newEventContainer
      */
+
     self.addEvent = function() {
         // Get the new event out of the container variable
         newEvent           = new Event(self.newEventContainer());
@@ -138,7 +219,11 @@ function ApplicationViewModel(){
                 var mappedEvents = [];
 
                 for(var i = 0; i < data.events.length; i++) {
-                    mappedEvents.push(new Event(data.events[i]));
+                    for(var j = 0; j < self.calendars().length; j++){
+                        if(data.events._calendar == self.calendars()[j])
+                        mappedEvents.push(new Event(data.events[i]), self.calendars()[j].isHidden());
+                    }
+                    
                 }
 
                 self.events(mappedEvents);
@@ -147,26 +232,7 @@ function ApplicationViewModel(){
 
     };
 
-    self.CalendarsInit  = function(){
-        serverUrl = "/data/userCalendars";
-    
-        $.ajax({
-                url: serverUrl,
-                dataType: 'json',
-                success: function(data) {
-                   var mappedCalendars = [];
 
-                    for(var i = 0; i < data.userCalendars.length; i++) {
-                        mappedCalendars.push(new Calendar(data.userCalendars[i], true));
-                    }
-
-                    for(var j = 0; j < data.subscriptions.length; j++) {
-                        mappedCalendars.push(new Calendar(data.subscriptions[j], false));
-                    }
-                    self.calendars(mappedCalendars);
-                }
-            });
-    };
 
     self.hideCalendar = function(calendars){
         calendars.isHidden(true);
@@ -268,12 +334,14 @@ function ApplicationViewModel(){
 
 
     // Initialize the ViewModal
-    self.EventsInit();
     self.CalendarsInit();
+    self.EventsInit();
+    
+
     
 }
 
-function Event(data) {
+function Event(data, isHidden) {
     var self              = this;
     
     self.title            = data.title;
@@ -303,8 +371,7 @@ function Event(data) {
     self.inputEndDate     = data.inputEndDate;
     self.inputEndTime     = data.inputEndTime;
 
-    self.isHidden         = ko.observable(false);
-    console.log("est: " + self.isHidden());
+    self.isHidden         = ko.observable(isHidden);
 }
 
 /**
@@ -329,7 +396,29 @@ function Calendar(data, isOwner) {
 }
 
 
+function handleImage(files) {
+    for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+
+    console.log(file);
+    var imageType = /image.*/;
+     
+     
+    var img = document.getElementById("newCalendarPhoto");
+    img.file = file;
+
+    var reader = new FileReader();
+    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
+    reader.readAsDataURL(file);
+  }
+}
+
+
+
 
 
 ko.applyBindings(new ApplicationViewModel());
+
+
+
 

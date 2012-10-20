@@ -36,6 +36,7 @@ module.exports = function(app){
 
 	app.post('/data/:cal_id/newevent', eventController.createEvent);
 
+	app.post('/data/newcalendar', calendarController.createCalendar);
 
 	app.get('/data/userCalendars', userController.getUserCalendars);
 

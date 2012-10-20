@@ -35,7 +35,7 @@ exports.goToApp = function(req, res){
 exports.goToAppDEV = function(req, res){
 
 
-        res.render('yetoto.html', {
+        res.render('test.html', {
             layout: false
         });
     

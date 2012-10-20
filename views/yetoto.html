@@ -62,7 +62,7 @@
     <!-- ActionBar -->
     <div id="actionBar" style="padding-bottom: 100px;">
           <li class="dropdown" style="float: left; list-style: none;">
-                <a href="/calendars/new">
+                <a href="#" data-bind='click: $root.goToNewCalendar'>
                     <button class="btn btn-info" style="height: 80px;  width: 32px;">
                         <i class="icon-plus icon-white"></i>
                     </button>
@@ -78,8 +78,8 @@
                     <li><a href="" data-bind="click: $root.goToCalendar"><i class="icon-info-sign"></i> <span data-bind="text: title"></span></a></li>
                     <li data-bind="visible: isOwner"><a href="#" class="addEvent" data-bind ="click: $root.goToNewEvent"><i class="icon-comment"></i> Add Event</a></li>
                     <li class="divider"></li>
-                    <li data-bind="visible: !isHidden()"><a href="#" data-bind="click: $root.hideCalendar"><i class="icon-ban-circle"></i> Hide</a></li>
-                    <li data-bind="visible: isHidden()"><a href="#" data-bind="click: $root.unhideCalendar"><i class="icon-ban-circle"></i> Unhide</a></li>
+                    <li data-bind="visible: !isHidden()"><a href="#" data-bind="click: $root.hideCalendar"><i class="icon-eye-close"></i> Hide</a></li>
+                    <li data-bind="visible: isHidden()"><a href="#" data-bind="click: $root.unhideCalendar"><i class="icon-eye-open"></i> Show</a></li>
                     <li class="divider"></li>                    
                     <li data-bind="visible: !isOwner()"><a href="" data-bind="click: $root.unsubscribeCalendar"><i class="icon-minus"></i> Unsubscribe</a></li>
                     <li data-bind="visible: isOwner()"><a href="#"><i class="icon-minus"></i> Delete Calendar</a></li> 
@@ -194,6 +194,39 @@
     </div>
   </div>
 
+  <!-- Modal New Calendar -->
+  <div id="NewCalendarModal" class="modal fade hide" data-bind="with: newCalendarContainer">
+    <div class="modal-header" >
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h2>Create New Yetoto</h2>
+    </div>
+    <div class="modal-body">
+      <div class="control-group">
+        <label class="control-label">Title of your new yetoto</label>
+        <div class="controls">
+          <input type="text" placeholder="Title..." data-bind="value: title">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Description</label>
+        <div class="controls">
+          <textarea type="text" placeholder="What kind of events will you share in your yetoto?" class="span5" data-bind="value: description"></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Image</label>
+        <div class="controls">
+          <img src="/img/default_photo.jpg" id="newCalendarPhoto" class="pull-left" style="width: 70px; height: 70px; z-index:1080">
+          <a href="#" id="fileSelect"><i class="icon-pencil" id="imageupload" width="14" height="14" style="background-color: white; opacity: 0.5; margin: 56px 0px 0px -14px; position: absolute; z-index: 1090;"></i></a>
+          <input type="file" id="fileElem" accept="image/*" style="display:none" onchange="handleImage(this.files)">
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-bind="click: $root.addCalendar">Create Calendar</button>
+    </div>
+  </div>
 
 
   <!-- developer box -->
