@@ -77,8 +77,9 @@ function ApplicationViewModel(){
     };
     self.addCalendar = function() {
         // Get the new Calendar out of the container variable
-        newCalendar          = new Calendar(self.newCalendarContainer());
+        newCalendar          = new Calendar(self.newCalendarContainer(), true);
         
+
         // Empty the container variable
         self.newCalendarContainer(null);
 
