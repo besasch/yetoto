@@ -32,6 +32,14 @@ UserSchema.static('getUserCalendars', function (userID, cb) {
         .exec(cb);
 });
 
+UserSchema.static('getUserWithCalendarData', function (userID, cb) {
+
+    return this.findById(userID)
+        .populate('userCalendars')
+        .populate('subscriptions')
+        .exec(cb);
+});
+
 UserSchema.static('subscribeCalendar', function (calendarObj, userId, cb) {
 
     // Find relevant user

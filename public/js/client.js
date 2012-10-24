@@ -13,7 +13,6 @@ function ApplicationViewModel(){
         return moment(self.shownDay()).format("DD.MM.YYYY");
     });
 
-    self.events               = ko.observableArray(); // All the displayed events are in here
     self.newEventContainer    = ko.observable();
     self.chosenEventContainer = ko.observable();
 
@@ -151,11 +150,9 @@ function ApplicationViewModel(){
             },
             dataType: "json",
             success: function() {
-                // Push the event into the view array when done
                 
-                if(moment(newEvent.startDate).format('DD.MM.YYYY') == moment(shownDay).format('DD.MM.YYYY')){
-                    self.events.push(newEvent);
-                }
+                self.addEventToFrontend(newEvent);
+                self.shownDay(newEvent.startDate);
 
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -169,12 +166,10 @@ function ApplicationViewModel(){
 
     self.goToTomorrow  = function() {
         self.shownDay(moment(self.shownDay()).add('days', 1)); // Set shownDate to the next day
-        self.loadEvents(); // Load the events again
     };
     
     self.goToYesterday = function() {
         self.shownDay(moment(self.shownDay()).subtract('days', 1)); // Set shownDate to the next day
-        self.loadEvents(); // Load the events again
     };
     
     
@@ -191,50 +186,9 @@ function ApplicationViewModel(){
     */
     self.EventsInit          = function() {
         self.shownDay(self.todaysDate); // Set shownDate to today's date
-        self.loadEvents(); // Load the events
     };
 
-    /*
-     * Load a date's events from the server
-     */
-    self.loadEvents    = function() {
-
-        // Clear the array first
-        self.events(null);
-
-        // Get the date to show
-        date = self.shownDay();
-
-        // Ripp the date parameter apart and build the server Url with it
-        year = moment(date).year();
-        month = moment(date).month() + 1;
-        day = moment(date).date();
-        serverUrl = "/data/" + year + "/" + month + "/" + day;
-
-        // Load initial state from server, convert it to instances
-        // of the Event class, then populate self.eventsâ€š
-        $.ajax({
-            url: serverUrl,
-            dataType: 'json',
-            success: function(data) {
-                var mappedEvents = [];
-
-                for(var i = 0; i < data.events.length; i++) {
-                    for(var j = 0; j < self.calendars().length; j++){
-                        if(data.events._calendar == self.calendars()[j])
-                        mappedEvents.push(new Event(data.events[i]), self.calendars()[j].isHidden());
-                    }
-                    
-                }
-
-                self.events(mappedEvents);
-            }
-        });
-
-    };
-
-
-
+    
     self.hideCalendar = function(calendars){
         calendars.isHidden(true);
         for(var i = 0; i < self.events().length; i++) {
@@ -332,11 +286,70 @@ function ApplicationViewModel(){
 
     };
 
+    // test new dto
+
+    self.events = ko.observable({});
+
+    self.loadAllData = function(){
+
+        $.ajax({
+            url: '/data/all',
+            dataType: 'json',
+            success: function(data) {
+                var userObj = data.user;
+                var eventList = data.events;
+
+                // Sorting the events should make them being processed faster
+                //eventList.sort(self.orderEvents);
+
+                // Put the events into the self.day object
+                for (var i = 0; i < eventList.length; i++) {
+
+                    self.addEventToFrontend(eventList[i]);
+
+                }
+
+                console.log("Blabla: " + JSON.stringify(self.events()) );
+            }
+
+        });
+
+    };
+
+    self.addEventToFrontend = function(eventObj){
+
+        var key = moment(eventObj.startDate).format("DD.MM.YYYY");
+        var value = new Event(eventObj, false);
+
+        console.log("keay: "+key);
+        console.log("value: "+ value);
+
+        if(self.events()[key]){
+            console.log("vorhanden");
+            self.events()[key].push(value);
+
+        } else {
+            console.log("nicht vorhanden");
+            var newArray = new Array(value);
+
+            self.events()[key] = newArray;
+        }
+
+    };
+
+    // This function is used to sort an array of events (just do array.sort(self.orderEvents)
+    self.orderEvents = function(event1, event2){
+        if (event1.startDate > event2.startDate) return 1;
+        if (event1.startDate < event2.startDate) return -1;
+        return 0;
+    };
+
 
 
     // Initialize the ViewModal
     self.CalendarsInit();
     self.EventsInit();
+    self.loadAllData();
     
 
     

@@ -101,7 +101,7 @@
     </div>
 
     <!-- Events -->
-    <div id="events" data-bind="foreach: events">
+    <div id="events" data-bind="foreach: events()[shownDayFormatted()]">
       <div class="event" data-bind="visible: !isHidden()">
         <a href="" data-bind="click: $root.goToEvent"><span class="fulllink"></span></a>
         <img src="img/photo.jpg">

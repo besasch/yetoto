@@ -34,6 +34,14 @@ EventSchema.static('getAllEventsByDate', function (inputDate, cb) {
         .exec(cb);
 });
 
+EventSchema.static('getEventsByIds', function (ids, cb) {
+
+    this.find({
+        '_id': { $in: ids }
+    }).exec(cb);
+});
+
+
 
 var Event = mongoose.model('event', EventSchema);
 

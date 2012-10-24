@@ -32,6 +32,8 @@ module.exports = function(app){
 	////////////////////////////////////////////////////////////////////
 	/////////// JSON API
 
+	app.get('/data/all', userController.getAllData);
+
 	app.get('/data/:year/:month/:day', eventController.getDay);
 
 	app.post('/data/:cal_id/newevent', eventController.createEvent);
