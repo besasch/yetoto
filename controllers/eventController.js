@@ -34,6 +34,42 @@ exports.getDay = function(req, res) {
     }
 };
 
+exports.deleteEvent = function(req, res) {
+
+        var eventId = req.params.eventId;
+
+        Event.findByIdAndRemove(eventId, function(err, eventObj){
+
+            if (err) {
+                console.log(':-( error deleting event with Id: ' + eventId);
+                console.log(err);
+            } else {
+
+                Calendar.findById(eventObj._calendar, function(err, cal){
+
+                    cal.events.remove(eventId);
+
+                    cal.save(function(err) {
+                        if (err) {
+
+                            console.log(':-( error saving calendar. Attention: Consistency Problem!');
+                            console.log(err);
+
+                        } else {
+
+                            res.send({data: "success!"}, 200);
+
+                        }
+                    
+                    });
+                });
+            }
+
+        });
+
+};
+
+
 
 /**
  * Adds a new event entity to the database

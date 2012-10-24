@@ -48,6 +48,8 @@ module.exports = function(app){
 
 	app.get('/data/unsubscribe/:calId', userController.unsubscribeCalendar);
 
+	app.post('/data/events/:eventId/delete', eventController.deleteEvent);
+
 	// DEVELOPMENT
 
 	app.get('/test', publicController.goToAppDEV);

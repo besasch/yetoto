@@ -17,7 +17,6 @@ function ApplicationViewModel(){
     self.chosenEventContainer = ko.observable();
 
 
-
     self.calendars              = ko.observableArray();
     self.newCalendarContainer   = ko.observable();
 
@@ -56,7 +55,6 @@ function ApplicationViewModel(){
         
         // Write the dummy data into the container
         self.newCalendarContainer(new Calendar(dummy));
-        console.log(self.newCalendarContainer());
        
         // Show the modal for the user to modify the data
         $('#NewCalendarModal').modal('show');
@@ -105,15 +103,13 @@ function ApplicationViewModel(){
         $('#NewCalendarModal').modal('hide');
     };
     self.goToNewEvent = function(calendars) {
-        
-        console.log("Calendar ID:" + calendars._id);
+    
         // Create some dummy data
         dummy = {title: "", content: "", startDate: moment(), endDate: moment(),
         location: "", _calendar: calendars._id, inputStartDate: ""};
         
         // Write the dummy data into the container
         self.newEventContainer(new Event(dummy));
-        console.log(self.newEventContainer());
         
         // Initiate timepickers and datepickers
         $('.init-timepicker').timepicker({ 'timeFormat': 'H:i' });
@@ -151,7 +147,7 @@ function ApplicationViewModel(){
             dataType: "json",
             success: function() {
                 
-                self.addEventToFrontend(newEvent);
+                self.addEventToFrontend(newEvent); // TODO get the new Event from the Server to give it the right _id (necessary for removing)
                 self.shownDay(newEvent.startDate);
 
             },
@@ -163,6 +159,27 @@ function ApplicationViewModel(){
         // Close Modal
         $('#NewEventModal').modal('hide');
     };
+
+    self.deleteEvent = function(chosenEvent){
+
+        var serverUrl = '/data/events/' + chosenEvent._id + '/delete';
+
+        $.ajax({
+            type: 'POST',
+            url: serverUrl,
+            dataType: 'json',
+            success: function(data) {
+
+                self.removeEventFromFrontend(chosenEvent);
+
+                $('#ShowEventModal').modal('hide');
+
+                self.shownDay(chosenEvent.startDate);
+
+            }
+        });
+    };
+
 
     self.goToTomorrow  = function() {
         self.shownDay(moment(self.shownDay()).add('days', 1)); // Set shownDate to the next day
@@ -287,8 +304,9 @@ function ApplicationViewModel(){
     };
 
     // test new dto
-
+    
     self.events = ko.observable({});
+    self.user   = ko.observable({});
 
     self.loadAllData = function(){
 
@@ -296,7 +314,7 @@ function ApplicationViewModel(){
             url: '/data/all',
             dataType: 'json',
             success: function(data) {
-                var userObj = data.user;
+                self.user(data.user);
                 var eventList = data.events;
 
                 // Sorting the events should make them being processed faster
@@ -309,7 +327,8 @@ function ApplicationViewModel(){
 
                 }
 
-                console.log("Blabla: " + JSON.stringify(self.events()) );
+                console.log(self.user());
+
             }
 
         });
@@ -321,19 +340,33 @@ function ApplicationViewModel(){
         var key = moment(eventObj.startDate).format("DD.MM.YYYY");
         var value = new Event(eventObj, false);
 
-        console.log("keay: "+key);
-        console.log("value: "+ value);
-
         if(self.events()[key]){
-            console.log("vorhanden");
             self.events()[key].push(value);
 
         } else {
-            console.log("nicht vorhanden");
             var newArray = new Array(value);
 
             self.events()[key] = newArray;
         }
+
+    };
+
+    self.removeEventFromFrontend = function(eventObj){
+
+        var key = moment(eventObj.startDate).format("DD.MM.YYYY");
+        var eventsArray = self.events()[key];
+
+
+        for(var i = 0; i < eventsArray.length; i++ ){
+            
+            if(eventsArray[i]._id == eventObj._id){
+            
+                eventsArray.splice(i,1);
+            
+            }
+        }
+
+        self.events()[key] = eventsArray;
 
     };
 
@@ -343,6 +376,8 @@ function ApplicationViewModel(){
         if (event1.startDate < event2.startDate) return -1;
         return 0;
     };
+
+
 
 
 
@@ -358,6 +393,7 @@ function ApplicationViewModel(){
 function Event(data, isHidden) {
     var self              = this;
     
+    self._id              = data._id;
     self.title            = data.title;
     self.content          = data.content;
     
