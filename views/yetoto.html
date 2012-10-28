@@ -81,8 +81,8 @@
                     <li data-bind="visible: !isHidden()"><a href="#" data-bind="click: $root.hideCalendar"><i class="icon-eye-close"></i> Hide</a></li>
                     <li data-bind="visible: isHidden()"><a href="#" data-bind="click: $root.unhideCalendar"><i class="icon-eye-open"></i> Show</a></li>
                     <li class="divider"></li>                    
-                    <li data-bind="visible: !isOwner()"><a href="" data-bind="click: $root.unsubscribeCalendar"><i class="icon-minus"></i> Unsubscribe</a></li>
-                    <li data-bind="visible: isOwner()"><a href="#"><i class="icon-minus"></i> Delete Calendar</a></li> 
+                    <li data-bind="visible: !isOwner()"><a href="#" data-bind="click: $root.unsubscribeCalendar"><i class="icon-minus"></i> Unsubscribe</a></li>
+                    <li data-bind="visible: isOwner()"><a href="#"  data-bind="click: $root.deleteCalendar"><i class="icon-minus"></i> Delete Calendar</a></li> 
                 </ul>
             </li>
         </ol>

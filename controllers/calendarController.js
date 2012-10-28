@@ -1,8 +1,9 @@
 var helper = require('../helper/dateHelper.js');
 var auth = require('../helper/authHelper.js');
 var moment = require('moment');
-var Calendar = require('../models/calendar').Calendar;
 var User = require('../models/user').User;
+var Calendar = require('../models/calendar').Calendar;
+var Event = require('../models/event').Event;
 var CONFIG = require('config');
 
 /*
@@ -63,5 +64,69 @@ exports.createCalendar = function(req, res) {
             });
         }
     });
+
+};
+exports.deleteCalendar = function(req, res) {
+        
+    var calendarId = req.params.calId;
+    var userId  = req.params.userId;
+    CalendarToBeDeleted = new Calendar();
+    CalendarToBeDeleted._id = calendarId;
+
+
+    // A. Delete Calendar from Database
+    Calendar.remove({ _id: calendarId }, function(err) {
+        if (err) {
+            console.log('could not remove calendar from calendars collection');
+        }
+        else {
+            console.log('calendar deleted');
+        }
+    });
+    
+    // B. Delete Calendar from User
+        // 1. Find Users who are owners of the calendar
+    User.find( { 'userCalendars' : CalendarToBeDeleted }, function(err, result) {
+        if (err) {
+            console.log("Seems that nobody was owner of the calendar... Error: " + err);
+        }
+        else {
+        // 2. Delete Ownerships
+            var i = result.length;
+
+            while(i--){
+                result[i].userCalendars.pull(CalendarToBeDeleted);
+                result[i].save();
+            }
+            console.log("Ownership of calendar have been removed.");
+            
+        }
+    });
+ 
+    // C. Delete Calendar Subscriptions 
+        // 1. Find Users who subscribed to the calendar
+    User.find( { 'subscriptions' : CalendarToBeDeleted }, function(err, result) {
+        if (err) {
+            console.log("Couldn't delete subscriptions of calendar... Error: " + err);
+        }
+        else {
+        // 2. Delete Subscriptions
+            var i = result.length;
+
+            while(i--){
+                result[i].subscriptions.pull(CalendarToBeDeleted);
+                result[i].save();
+            }
+            console.log("Subscriptions to calendar have been removed.");
+            
+        }
+    });
+ 
+
+    // D. Delete events from Calendar
+
+    
+
+    res.send(JSON.stringify({data: "success!"}), 200);
 
 };

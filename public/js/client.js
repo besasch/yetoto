@@ -47,6 +47,26 @@ function ApplicationViewModel(){
                 }
             });
     };
+    self.deleteCalendar = function(calendar) {
+        
+        serverUrl = "/data/delete/" + calendar._id;
+    
+        $.ajax({
+                url: serverUrl,
+                type: 'post',
+                dataType: 'json',
+                success: function(data) {
+                    //Remove calendar also in Front End
+                    self.calendars.remove(calendar);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                alert('error ' + textStatus + " " + errorThrown);
+            }
+            });
+
+
+
+    };
     
     self.goToNewCalendar = function() {
         
@@ -326,9 +346,12 @@ function ApplicationViewModel(){
                     self.addEventToFrontend(eventList[i]);
 
                 }
+<<<<<<< HEAD
 
                 console.log(self.user());
 
+=======
+>>>>>>> Delete Calendar Function Implemented
             }
 
         });
