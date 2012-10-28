@@ -117,7 +117,7 @@ exports.createEvent = function(req, res) {
                     } else {
                         console.log(':-) new event successfully added');
 
-                        res.send(JSON.stringify({data: "success!"}), 200);
+                        res.send(JSON.stringify(newEvent), 200);
                     }
                 });
 

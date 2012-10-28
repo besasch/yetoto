@@ -118,9 +118,9 @@ function ApplicationViewModel(){
                 "data": JSON.stringify(newCalendar)
             },
             dataType: "json",
-            success: function() {
+            success: function(data) {
                 // Push the Calendar into the view array when done
-                self.calendars.push(newCalendar);
+                self.calendars.push(new Calendar(data, true));
                 
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -174,9 +174,9 @@ function ApplicationViewModel(){
                 "data": JSON.stringify(newEvent)
             },
             dataType: "json",
-            success: function() {
-                
-                self.addEventToFrontend(newEvent); // TODO get the new Event from the Server to give it the right _id (necessary for removing)
+            success: function(data) {
+
+                self.addEventToFrontend(new Event(data)); // TODO get the new Event from the Server to give it the right _id (necessary for removing)
                 self.shownDay(newEvent.startDate);
 
             },

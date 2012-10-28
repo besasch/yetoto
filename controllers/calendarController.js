@@ -57,7 +57,7 @@ exports.createCalendar = function(req, res) {
                     } else {
                         console.log(':-) new event successfully added');
 
-                        res.send(JSON.stringify({data: "success!"}), 200);
+                        res.send(JSON.stringify(newCalendar), 200);
                     }
                 });
 
