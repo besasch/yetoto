@@ -124,9 +124,31 @@ exports.deleteCalendar = function(req, res) {
  
 
     // D. Delete events from Calendar
+    Event.find( { '_calendar' : CalendarToBeDeleted }, function(err, result) {
+        if (err) {
+            console.log("Couldn't delete events from calendar... Error: " + err);
+        }
+        else {
+            // Delete Events
+            // Save deleted events in an output object so they can be sent back to the client
+            // and removed from its Front-End
+           var outputObj = {
+                events: result
+            };
 
+            var i = result.length;
+
+            while(i--){
+                result[i].remove();
+            }
+              
+            console.log("Events from calendar have been removed.");
+
+            res.send(JSON.stringify(outputObj), 200);
+        }
+    });
     
 
-    res.send(JSON.stringify({data: "success!"}), 200);
+    
 
 };

@@ -58,13 +58,20 @@ function ApplicationViewModel(){
                 success: function(data) {
                     //Remove calendar also in Front End
                     self.calendars.remove(calendar);
+                        
+                    //Remove Events from deleted calendar from Front End
+                    var i = data.events.length;
+
+                    while(i--){
+                        self.removeEventFromFrontend(new Event(data.events[i]));
+                    }
+
                 },
+
                 error: function(jqXHR, textStatus, errorThrown) {
                 alert('error ' + textStatus + " " + errorThrown);
             }
             });
-
-
 
     };
     
@@ -218,14 +225,6 @@ function ApplicationViewModel(){
         $('#ShowEventModal').modal('show');
     };
     
-    /*
-    * Initialize the app with relevant data
-    */
-    self.EventsInit          = function() {
-        self.shownDay(self.todaysDate); // Set shownDate to today's date
-    };
-
-    
     self.hideCalendar = function(calendars){
         calendars.isHidden(true);
         for(var i = 0; i < self.events().length; i++) {
@@ -342,22 +341,16 @@ function ApplicationViewModel(){
 
                 // Put the events into the self.day object
                 for (var i = 0; i < eventList.length; i++) {
-
                     self.addEventToFrontend(eventList[i]);
-
                 }
-<<<<<<< HEAD
 
                 console.log(self.user());
+                self.shownDay(self.todaysDate); // Set shownDate to today's date
 
-=======
->>>>>>> Delete Calendar Function Implemented
-            }
+                }
 
         });
-
     };
-
     self.addEventToFrontend = function(eventObj){
 
         var key = moment(eventObj.startDate).format("DD.MM.YYYY");
@@ -406,7 +399,7 @@ function ApplicationViewModel(){
 
     // Initialize the ViewModal
     self.CalendarsInit();
-    self.EventsInit();
+//    self.EventsInit();
     self.loadAllData();
     
 

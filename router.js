@@ -48,12 +48,10 @@ module.exports = function(app){
 
 	app.get('/data/unsubscribe/:calId', userController.unsubscribeCalendar);
 
-<<<<<<< HEAD
 	app.post('/data/events/:eventId/delete', eventController.deleteEvent);
-=======
+
 	app.post('/data/delete/:calId', calendarController.deleteCalendar);
 
->>>>>>> Delete Calendar Function Implemented
 
 	// DEVELOPMENT
 
