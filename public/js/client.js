@@ -63,7 +63,9 @@ function ApplicationViewModel(){
                     var i = data.events.length;
 
                     while(i--){
+
                         self.removeEventFromFrontend(new Event(data.events[i]));
+
                     }
 
                 },
@@ -399,7 +401,6 @@ function ApplicationViewModel(){
 
     // Initialize the ViewModal
     self.CalendarsInit();
-//    self.EventsInit();
     self.loadAllData();
     
 
