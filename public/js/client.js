@@ -303,7 +303,6 @@ function ApplicationViewModel(){
             url: serverUrl,
             dataType: 'json',
             success: function(data) {
-                self.EventsInit();
                 self.calendars.push(cal);
             }
         });
@@ -317,7 +316,6 @@ function ApplicationViewModel(){
             url: serverUrl,
             dataType: 'json',
             success: function(data) {
-                self.EventsInit();
                 self.calendars.remove(chosenCalendar);
             }
         });
