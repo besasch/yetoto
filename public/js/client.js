@@ -2,6 +2,8 @@
  * Event class to create consistend event objects in the whole application
  */
 
+
+
 function ApplicationViewModel(){
 	
     var self = this;
@@ -105,17 +107,19 @@ function ApplicationViewModel(){
         // Get the new Calendar out of the container variable
         newCalendar          = new Calendar(self.newCalendarContainer(), true);
         
-
-        // Empty the container variable
-        self.newCalendarContainer(null);
-
+        //Get type and data of uploaded image
+        var chosenImage = document.getElementById("newCalendarPhoto").src;
+        var type = chosenImage.substring(chosenImage.indexOf("/") + 1, chosenImage.indexOf(";"));
+        var image = chosenImage.substring(chosenImage.indexOf(","));
 
         // Send the event to the server
         $.ajax({
             type: 'POST',
             url: '/data/newcalendar',
             data: {
-                "data": JSON.stringify(newCalendar)
+                "data": JSON.stringify(newCalendar),
+                "image": image,
+                "type": type
             },
             dataType: "json",
             success: function(data) {
@@ -130,6 +134,10 @@ function ApplicationViewModel(){
 
         // Close Modal
         $('#NewCalendarModal').modal('hide');
+
+        // Empty the container variable
+        self.newCalendarContainer(null);
+
     };
     self.goToNewEvent = function(calendars) {
     
@@ -344,7 +352,6 @@ function ApplicationViewModel(){
                     self.addEventToFrontend(eventList[i]);
                 }
 
-                console.log(self.user());
                 self.shownDay(self.todaysDate); // Set shownDate to today's date
 
                 }
@@ -463,9 +470,8 @@ function Calendar(data, isOwner) {
 
 function handleImage(files) {
     for (var i = 0; i < files.length; i++) {
-    var file = files[i];
+    file = files[i];
 
-    console.log(file);
     var imageType = /image.*/;
      
      

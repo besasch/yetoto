@@ -5,6 +5,7 @@ var User = require('../models/user').User;
 var Calendar = require('../models/calendar').Calendar;
 var Event = require('../models/event').Event;
 var CONFIG = require('config');
+var fs = require("fs");
 
 /*
  * Performs a search
@@ -30,12 +31,21 @@ exports.createCalendar = function(req, res) {
         
     receivedCalendar = JSON.parse(req.body.data);
 
+    var image = req.body.image;
+    var type = req.body.type;
+
+    console.log(image);
 
     // 1. Save the new calendar into the calendars-collection.
     var newCalendar           = new Calendar();
     newCalendar.title         = receivedCalendar.title;
     newCalendar.description   = receivedCalendar.description;
     newCalendar.owner         = req.user._id;
+
+    //Check whether image has been uploaded or default
+    if(image.indexOf(CONFIG.defaults.calendarPicture) == -1){
+        newCalendar.picture = "/uploads/" + newCalendar._id + "." + type;
+    }
 
     newCalendar.save(function(err) {
         if (err) {
@@ -56,6 +66,18 @@ exports.createCalendar = function(req, res) {
                         res.send({ error: 'something blew up' }, 500); // TODO this doesn't quite work :-(
                     } else {
                         console.log(':-) new event successfully added');
+
+                        if(image.indexOf(CONFIG.defaults.calendarPicture)== -1){
+                            //Write image to file system
+                            var dataBuffer = new Buffer(image, 'base64');
+                            fs.writeFile("./public" + CONFIG.images.dir + newCalendar._id + "." + type, dataBuffer, function(err) {
+                              if(err){
+                                console.log("Couldn't write image of calendar to disk, sorry. This is all I can say: " + err);
+                              }
+                              
+                            });
+
+                        }
 
                         res.send(JSON.stringify(newCalendar), 200);
                     }
@@ -147,7 +169,7 @@ exports.deleteCalendar = function(req, res) {
             res.send(JSON.stringify(outputObj), 200);
         }
     });
-    
+
 
     
 
