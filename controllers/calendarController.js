@@ -70,7 +70,7 @@ exports.createCalendar = function(req, res) {
                         if(image.indexOf(CONFIG.defaults.calendarPicture)== -1){
                             //Write image to file system
                             var dataBuffer = new Buffer(image, 'base64');
-                            fs.writeFile("./public" + CONFIG.images.dir + newCalendar._id + "." + type, dataBuffer, function(err) {
+                            fs.writeFile(CONFIG.images.dir + "/uploads/" + newCalendar._id + "." + type, dataBuffer, function(err) {
                               if(err){
                                 console.log("Couldn't write image of calendar to disk, sorry. This is all I can say: " + err);
                               }
@@ -90,23 +90,40 @@ exports.createCalendar = function(req, res) {
 };
 exports.deleteCalendar = function(req, res) {
         
-    var calendarId = req.params.calId;
     var userId  = req.params.userId;
-    CalendarToBeDeleted = new Calendar();
-    CalendarToBeDeleted._id = calendarId;
+    var CalendarToBeDeleted = new Calendar();
+    CalendarToBeDeleted._id = req.params.calId;
 
 
     // A. Delete Calendar from Database
-    Calendar.remove({ _id: calendarId }, function(err) {
+    Calendar.findById({ _id: CalendarToBeDeleted._id }, function(err, result) {
         if (err) {
             console.log('could not remove calendar from calendars collection');
         }
         else {
+            CalendarToBeDeleted = result;
+
+            // B. Delete Calendar Picture
+            if(CalendarToBeDeleted.picture != CONFIG.defaults.calendarPicture){
+                fs.unlink(CONFIG.images.dir + CalendarToBeDeleted.picture, function(err){
+                    if(err){
+                        console.log("Couldn't remove calendar picture from disk. Sorry: " + err);
+                    }
+                    else{
+
+                        console.log("Calendar picture removed from disk.");
+                    }
+                });
+            }
+
+
+            CalendarToBeDeleted.remove();
+
             console.log('calendar deleted');
         }
     });
     
-    // B. Delete Calendar from User
+    // C. Delete Calendar from User
         // 1. Find Users who are owners of the calendar
     User.find( { 'userCalendars' : CalendarToBeDeleted }, function(err, result) {
         if (err) {
@@ -125,7 +142,7 @@ exports.deleteCalendar = function(req, res) {
         }
     });
  
-    // C. Delete Calendar Subscriptions 
+    // D. Delete Calendar Subscriptions 
         // 1. Find Users who subscribed to the calendar
     User.find( { 'subscriptions' : CalendarToBeDeleted }, function(err, result) {
         if (err) {
@@ -145,7 +162,7 @@ exports.deleteCalendar = function(req, res) {
     });
  
 
-    // D. Delete events from Calendar
+    // E. Delete events from Calendar
     Event.find( { '_calendar' : CalendarToBeDeleted }, function(err, result) {
         if (err) {
             console.log("Couldn't delete events from calendar... Error: " + err);
