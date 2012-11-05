@@ -51,6 +51,24 @@ imageHelpers = {
         }).on('error', function(e) {
           console.log(":-( Got error: " + e.message);
         });
+    },
+
+    saveBase64ToDisk: function(image, location, cb){
+
+        //Write image to file system
+        var dataBuffer = new Buffer(image, 'base64');
+        fs.writeFile(location, dataBuffer, cb);
+    },
+
+    isImageUpload: function(input){
+
+        var base64 = new RegExp("^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$");
+
+        if (base64.test(input)){
+            return true;
+        }
+
+        return false;
     }
 };
 

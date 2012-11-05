@@ -1,5 +1,6 @@
 var helper = require('../helper/dateHelper.js');
 var auth = require('../helper/authHelper.js');
+var imgHelp = require('../helper/imageHelper.js');
 var moment = require('moment');
 var User = require('../models/user').User;
 var Calendar = require('../models/calendar').Calendar;
@@ -35,33 +36,29 @@ exports.updateCalendar = function(req, res){
     var image = req.body.image;
     var type = req.body.type;
 
-    console.log("image: "+ image);
-    console.log("type: "+ type);
-
     Calendar.findById(receivedCalendar._id, function(err, calendar){
         calendar.title = receivedCalendar.title;
         calendar.description = receivedCalendar.description;
         calendar.modificationTime = new Date();
-        
-        //calendar.picture = "/uploads/" + calendar._id + "." + type;
 
         calendar.save(function(err){
 
             if (err) {
-                console.log(':-( Error updating new calendar');
+                console.log(':-( Error updating new calendar'); 
                 console.log(err);
             } else {
                 console.log(':-) calendar update successful');
-/*
-                if(image.indexOf(CONFIG.defaults.calendarPicture)== -1){
-                    //Write image to file system
-                    var dataBuffer = new Buffer(image, 'base64');
-                    fs.writeFile("./public" + CONFIG.images.dir + calendar._id + "." + type, dataBuffer, function(err) {
+
+                if(imgHelp.isImageUpload(image)){
+
+                    var location = CONFIG.images.dir + "/uploads/" + calendar._id + "." + type;
+
+                    imgHelp.saveBase64ToDisk(image, location, function(err) {
                         if(err){
                             console.log("Couldn't write image of calendar to disk, sorry. This is all I can say: " + err);
                         }
                     });
-                }*/
+                }
 
                 res.send(JSON.stringify(calendar), 200);
 
@@ -79,8 +76,6 @@ exports.createCalendar = function(req, res) {
 
     var image = req.body.image;
     var type = req.body.type;
-
-    console.log(image);
 
     // 1. Save the new calendar into the calendars-collection.
     var newCalendar           = new Calendar();
@@ -113,16 +108,15 @@ exports.createCalendar = function(req, res) {
                     } else {
                         console.log(':-) new event successfully added');
 
-                        if(image.indexOf(CONFIG.defaults.calendarPicture)== -1){
-                            //Write image to file system
-                            var dataBuffer = new Buffer(image, 'base64');
-                            fs.writeFile(CONFIG.images.dir + "/uploads/" + newCalendar._id + "." + type, dataBuffer, function(err) {
-                              if(err){
-                                console.log("Couldn't write image of calendar to disk, sorry. This is all I can say: " + err);
-                              }
-                              
-                            });
+                        if(imgHelp.isImageUpload(image)){
 
+                            var location = CONFIG.images.dir + "/uploads/" + newCalendar._id + "." + type;
+
+                            imgHelp.saveBase64ToDisk(image, location, function(err) {
+                                if(err){
+                                    console.log("Couldn't write image of calendar to disk, sorry. This is all I can say: " + err);
+                                }
+                            });
                         }
 
                         res.send(JSON.stringify(newCalendar), 200);
@@ -188,8 +182,8 @@ exports.deleteCalendar = function(req, res) {
         }
     });
  
-    // D. Delete Calendar Subscriptions 
-        // 1. Find Users who subscribed to the calendar
+    // D. Delete Calendar Subscriptions
+    // 1. Find Users who subscribed to the calendar
     User.find( { 'subscriptions' : CalendarToBeDeleted }, function(err, result) {
         if (err) {
             console.log("Couldn't delete subscriptions of calendar... Error: " + err);

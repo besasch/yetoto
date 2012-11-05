@@ -52,7 +52,7 @@ function ApplicationViewModel(){
     self.goToNewCalendar = function() {
         
         // Create some dummy data
-        dummy = {title: "", description: ""};
+        var dummy = {title: "", description: ""};
         
         // Write the dummy data into the container
         self.newCalendarContainer(new Calendar(dummy));
@@ -97,7 +97,7 @@ function ApplicationViewModel(){
 
     };
 
-    self.saveCalendarUpdate = function () {
+    self.updateCalendar = function () {
         $('#UpdateCalendarModal').modal('hide');
 
         // Get the new Calendar out of the container variable
@@ -106,7 +106,7 @@ function ApplicationViewModel(){
         //Get type and data of uploaded image
         var chosenImage = document.getElementById("updateCalendarPhoto").src;
         var type = chosenImage.substring(chosenImage.indexOf("/") + 1, chosenImage.indexOf(";"));
-        var image = chosenImage.substring(chosenImage.indexOf(","));
+        var image = chosenImage.substring(chosenImage.indexOf(",") + 1);
 
         // Send the event to the server
         $.ajax({
@@ -121,10 +121,11 @@ function ApplicationViewModel(){
             success: function(data) {
 
                 // Update calendar observable
-                for (var i = 0; i < self.calendars.length; i++) {
-                    if(self.calendars[i]._id == data._id){
-                        self.calendars[i] = data;
-                        console.log("break");
+                for (var i = 0; i < self.calendars().length; i++) {
+                    if(self.calendars()[i]._id == data._id){
+                        
+                        self.calendars.splice(i, 1);
+                        self.calendars.splice(i, 0, data);
                         break;
                     }
                 }
@@ -143,7 +144,7 @@ function ApplicationViewModel(){
         //Get type and data of uploaded image
         var chosenImage = document.getElementById("newCalendarPhoto").src;
         var type = chosenImage.substring(chosenImage.indexOf("/") + 1, chosenImage.indexOf(";"));
-        var image = chosenImage.substring(chosenImage.indexOf(","));
+        var image = chosenImage.substring(chosenImage.indexOf(",") + 1);
 
         // Send the event to the server
         $.ajax({
