@@ -221,8 +221,8 @@
         <div class="controls">
           
           <a href="#" id="fileSelect">
+            <img src="/img/photo.jpg" id="newCalendarPhoto" class="pull-left" style="width: 70px; height: 70px; z-index:1080">            
             <i class="icon-pencil" id="imageupload" width="14" height="14" style="background-color: white; opacity: 0.5; margin: 56px 0px 0px -14px; position: absolute; z-index: 1090;"></i>
-            <img src="/img/photo.jpg" id="newCalendarPhoto" class="pull-left" style="width: 70px; height: 70px; z-index:1080">
           </a>
           <input type="file" id="fileElem" accept="image/*" style="display:none" onchange="handleImage(this.files, 'newCalendarPhoto')">
         </div>
@@ -259,9 +259,9 @@
         <div class="controls">
           
           <a href="#" id="fileSelectUpdate">
+            <img id="updateCalendarPhoto" data-bind="attr: { src: picture }" class="pull-left" style="width: 70px; height: 70px; z-index:1080">
             <i class="icon-pencil" width="14" height="14" style="background-color: white; opacity: 0.5; margin: 56px 0px 0px -14px; position: absolute; z-index: 1090;"></i>
 
-            <img id="updateCalendarPhoto" data-bind="attr: { src: picture }" class="pull-left" style="width: 70px; height: 70px; z-index:1080">
           </a>
           
           <input type="file" id="fileElemUpdate" accept="image/*" style="display:none" onchange="handleImage(this.files, 'updateCalendarPhoto')">
