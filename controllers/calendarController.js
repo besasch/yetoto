@@ -27,9 +27,55 @@ exports.searchCalendars = function(req, res) {
         res.send(JSON.stringify(outputObj), 200);
     });
 };
+
+exports.updateCalendar = function(req, res){
+
+    var receivedCalendar = JSON.parse(req.body.data);
+    
+    var image = req.body.image;
+    var type = req.body.type;
+
+    console.log("image: "+ image);
+    console.log("type: "+ type);
+
+    Calendar.findById(receivedCalendar._id, function(err, calendar){
+        calendar.title = receivedCalendar.title;
+        calendar.description = receivedCalendar.description;
+        calendar.modificationTime = new Date();
+        
+        //calendar.picture = "/uploads/" + calendar._id + "." + type;
+
+        calendar.save(function(err){
+
+            if (err) {
+                console.log(':-( Error updating new calendar');
+                console.log(err);
+            } else {
+                console.log(':-) calendar update successful');
+/*
+                if(image.indexOf(CONFIG.defaults.calendarPicture)== -1){
+                    //Write image to file system
+                    var dataBuffer = new Buffer(image, 'base64');
+                    fs.writeFile("./public" + CONFIG.images.dir + calendar._id + "." + type, dataBuffer, function(err) {
+                        if(err){
+                            console.log("Couldn't write image of calendar to disk, sorry. This is all I can say: " + err);
+                        }
+                    });
+                }*/
+
+                res.send(JSON.stringify(calendar), 200);
+
+
+            }
+
+        });
+    });
+
+};
+
 exports.createCalendar = function(req, res) {
         
-    receivedCalendar = JSON.parse(req.body.data);
+    var receivedCalendar = JSON.parse(req.body.data);
 
     var image = req.body.image;
     var type = req.body.type;

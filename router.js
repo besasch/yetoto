@@ -40,6 +40,8 @@ module.exports = function(app){
 
 	app.post('/data/newcalendar', calendarController.createCalendar);
 
+	app.post('/data/updatecalendar', calendarController.updateCalendar);
+
 	app.get('/data/userCalendars', userController.getUserCalendars);
 
 	app.get('/data/search/:term', calendarController.searchCalendars);

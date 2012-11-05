@@ -1,9 +1,3 @@
-/**
- * Event class to create consistend event objects in the whole application
- */
-
-
-
 function ApplicationViewModel(){
 	
     var self = this;
@@ -24,31 +18,7 @@ function ApplicationViewModel(){
 
 
     // Behaviour
-    /*
-     * Shows a modal to the user for adding a new event
-     */
-    self.CalendarsInit  = function(){
 
-        serverUrl = "/data/userCalendars";
-    
-        $.ajax({
-                url: serverUrl,
-                dataType: 'json',
-                success: function(data) {
-                   var mappedCalendars = [];
-
-                    for(var i = 0; i < data.userCalendars.length; i++) {
-                        mappedCalendars.push(new Calendar(data.userCalendars[i], true));
-                    }
-
-                    for(var j = 0; j < data.subscriptions.length; j++) {
-                        mappedCalendars.push(new Calendar(data.subscriptions[j], false));
-                    }
-                    self.calendars(mappedCalendars);
-
-                }
-            });
-    };
     self.deleteCalendar = function(calendar) {
         
         serverUrl = "/data/delete/" + calendar._id;
@@ -103,9 +73,72 @@ function ApplicationViewModel(){
           e.preventDefault(); // prevent navigation to "#"
         }, false);
     };
+
+    self.goToEditCalendar = function(chosenCalendar) {
+
+        $('#ShowCalendarModal').modal('hide');
+
+        self.newCalendarContainer(chosenCalendar);
+
+        // Show the modal for the user to modify the data
+        $('#UpdateCalendarModal').modal('show');
+
+                //Image Handling
+        var fileSelectUpdate = document.getElementById("fileSelectUpdate"),
+          fileElemUpdate = document.getElementById("fileElemUpdate");
+         
+
+        fileSelectUpdate.addEventListener("click", function (e) {
+          if (fileElemUpdate) {
+            fileElemUpdate.click();
+          }
+          e.preventDefault(); // prevent navigation to "#"
+        }, false);
+
+    };
+
+    self.saveCalendarUpdate = function () {
+        $('#UpdateCalendarModal').modal('hide');
+
+        // Get the new Calendar out of the container variable
+        var updatedCalendar          = new Calendar(self.newCalendarContainer(), true);
+        
+        //Get type and data of uploaded image
+        var chosenImage = document.getElementById("updateCalendarPhoto").src;
+        var type = chosenImage.substring(chosenImage.indexOf("/") + 1, chosenImage.indexOf(";"));
+        var image = chosenImage.substring(chosenImage.indexOf(","));
+
+        // Send the event to the server
+        $.ajax({
+            type: 'POST',
+            url: '/data/updatecalendar',
+            data: {
+                "data": JSON.stringify(updatedCalendar),
+                "image": image,
+                "type": type
+            },
+            dataType: "json",
+            success: function(data) {
+
+                // Update calendar observable
+                for (var i = 0; i < self.calendars.length; i++) {
+                    if(self.calendars[i]._id == data._id){
+                        self.calendars[i] = data;
+                        console.log("break");
+                        break;
+                    }
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('error ' + textStatus + " " + errorThrown);
+            }
+        });
+
+    };
+
     self.addCalendar = function() {
         // Get the new Calendar out of the container variable
-        newCalendar          = new Calendar(self.newCalendarContainer(), true);
+        var newCalendar          = new Calendar(self.newCalendarContainer(), true);
         
         //Get type and data of uploaded image
         var chosenImage = document.getElementById("newCalendarPhoto").src;
@@ -142,7 +175,7 @@ function ApplicationViewModel(){
     self.goToNewEvent = function(calendars) {
     
         // Create some dummy data
-        dummy = {title: "", content: "", startDate: moment(), endDate: moment(),
+        var dummy = {title: "", content: "", startDate: moment(), endDate: moment(),
         location: "", _calendar: calendars._id, inputStartDate: ""};
         
         // Write the dummy data into the container
@@ -164,7 +197,7 @@ function ApplicationViewModel(){
 
     self.addEvent = function() {
         // Get the new event out of the container variable
-        newEvent           = new Event(self.newEventContainer());
+        var newEvent           = new Event(self.newEventContainer());
         
         // Empty the container variable
         self.newEventContainer(null);
@@ -330,12 +363,12 @@ function ApplicationViewModel(){
 
     };
 
-    // test new dto
+    // Load Data
     
     self.events = ko.observable({});
     self.user   = ko.observable({});
 
-    self.loadAllData = function(){
+    self.loadData = function(){
 
         $.ajax({
             url: '/data/all',
@@ -344,8 +377,7 @@ function ApplicationViewModel(){
                 self.user(data.user);
                 var eventList = data.events;
 
-                // Sorting the events should make them being processed faster
-                //eventList.sort(self.orderEvents);
+                self.calendarsInit(data.user);
 
                 // Put the events into the self.day object
                 for (var i = 0; i < eventList.length; i++) {
@@ -354,10 +386,29 @@ function ApplicationViewModel(){
 
                 self.shownDay(self.todaysDate); // Set shownDate to today's date
 
-                }
+            }
 
         });
     };
+
+    self.calendarsInit  = function(data){
+
+        var mappedCalendars = [];
+
+        for(var i = 0; i < data.userCalendars.length; i++) {
+            mappedCalendars.push(new Calendar(data.userCalendars[i], true));
+        }
+
+        for(var j = 0; j < data.subscriptions.length; j++) {
+            mappedCalendars.push(new Calendar(data.subscriptions[j], false));
+        }
+        self.calendars(mappedCalendars);
+
+    };
+
+
+
+
     self.addEventToFrontend = function(eventObj){
 
         var key = moment(eventObj.startDate).format("DD.MM.YYYY");
@@ -393,22 +444,8 @@ function ApplicationViewModel(){
 
     };
 
-    // This function is used to sort an array of events (just do array.sort(self.orderEvents)
-    self.orderEvents = function(event1, event2){
-        if (event1.startDate > event2.startDate) return 1;
-        if (event1.startDate < event2.startDate) return -1;
-        return 0;
-    };
-
-
-
-
-
     // Initialize the ViewModal
-    self.CalendarsInit();
-    self.loadAllData();
-    
-
+    self.loadData();
     
 }
 
@@ -468,19 +505,19 @@ function Calendar(data, isOwner) {
 }
 
 
-function handleImage(files) {
+function handleImage(files, elementId) {
     for (var i = 0; i < files.length; i++) {
-    file = files[i];
+        var file = files[i];
 
-    var imageType = /image.*/;
-     
-     
-    var img = document.getElementById("newCalendarPhoto");
-    img.file = file;
+        var imageType = /image.*/;
+         
+         
+        var img = document.getElementById(elementId);
+        img.file = file;
 
-    var reader = new FileReader();
-    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
-    reader.readAsDataURL(file);
+        var reader = new FileReader();
+        reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
+        reader.readAsDataURL(file);
   }
 }
 

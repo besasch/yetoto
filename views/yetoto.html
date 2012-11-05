@@ -104,7 +104,7 @@
     <div id="events" data-bind="foreach: events()[shownDayFormatted()]">
       <div class="event" data-bind="visible: !isHidden()">
         <a href="" data-bind="click: $root.goToEvent"><span class="fulllink"></span></a>
-        <img src="img/photo.jpg">
+        <img data-bind="attr: { src: _calendar.picture }" style="width: 50px; height: 50px;">
         <span class="time" data-bind="text: startTime"></span>
         <div class="controls">
           <!-- controls -->
@@ -131,7 +131,7 @@
     </div>
   </div>
 
-  <!-- Modal Calendar Event -->
+  <!-- Modal Show Calendar -->
   <div id="ShowCalendarModal" class="modal fade hide" data-bind="with: chosenCalendarContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
@@ -145,7 +145,10 @@
 
     </div>
     <div class="modal-footer">
+
       <button class="btn pull-right" data-bind="click: $root.subscribeCalendar">Subscribe</button>
+      <button class="btn pull-right" data-bind="{visible: isOwner, click: $root.goToEditCalendar}">Edit</button>
+
     </div>
   </div>
 
@@ -218,7 +221,7 @@
         <div class="controls">
           <img src="/img/photo.jpg" id="newCalendarPhoto" class="pull-left" style="width: 70px; height: 70px; z-index:1080">
           <a href="#" id="fileSelect"><i class="icon-pencil" id="imageupload" width="14" height="14" style="background-color: white; opacity: 0.5; margin: 56px 0px 0px -14px; position: absolute; z-index: 1090;"></i></a>
-          <input type="file" id="fileElem" accept="image/*" style="display:none" onchange="handleImage(this.files)">
+          <input type="file" id="fileElem" accept="image/*" style="display:none" onchange="handleImage(this.files, 'newCalendarPhoto')">
         </div>
       </div>
 
@@ -228,6 +231,40 @@
     </div>
   </div>
 
+
+<!-- Modal Update Calendar -->
+  <div id="UpdateCalendarModal" class="modal fade hide" data-bind="with: newCalendarContainer">
+    <div class="modal-header" >
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h2>Edit Yetoto</h2>
+    </div>
+    <div class="modal-body">
+      <div class="control-group">
+        <label class="control-label">Title of your new yetoto</label>
+        <div class="controls">
+          <input type="text" placeholder="Title..." data-bind="value: title">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Description</label>
+        <div class="controls">
+          <textarea type="text" placeholder="What kind of events will you share in your yetoto?" class="span5" data-bind="value: description"></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Image</label>
+        <div class="controls">
+          <img id="updateCalendarPhoto" data-bind="attr: { src: picture }" class="pull-left" style="width: 70px; height: 70px; z-index:1080">
+          <a href="#" id="fileSelectUpdate"><i class="icon-pencil" width="14" height="14" style="background-color: white; opacity: 0.5; margin: 56px 0px 0px -14px; position: absolute; z-index: 1090;"></i></a>
+          <input type="file" id="fileElemUpdate" accept="image/*" style="display:none" onchange="handleImage(this.files, 'updateCalendarPhoto')">
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-bind="click: $root.saveCalendarUpdate">Save yetoto</button>
+    </div>
+  </div>
 
   <!-- developer box -->
 
