@@ -124,8 +124,7 @@ function ApplicationViewModel(){
                 for (var i = 0; i < self.calendars().length; i++) {
                     if(self.calendars()[i]._id == data._id){
                         
-                        self.calendars.splice(i, 1);
-                        self.calendars.splice(i, 0, data);
+                        self.calendars.splice(i, 1, new Calendar(data, true));
                         break;
                     }
                 }
