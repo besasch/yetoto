@@ -38,7 +38,8 @@ EventSchema.static('getEventsByIds', function (ids, cb) {
 
     this.find({
         '_id': { $in: ids }
-    }).exec(cb);
+    }).populate('_calendar', 'picture')
+    .exec(cb);
 });
 
 

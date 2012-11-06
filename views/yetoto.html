@@ -284,8 +284,8 @@
     <h3>Developer Area</h3>
 
     <div class="span5">
-      <label>Events Array:</label>
-      <textarea style="width:350px; height:180px;" data-bind="text: ko.toJSON(events)" ></textarea>
+      <label>Todays Events Array:</label>
+      <textarea style="width:350px; height:180px;" data-bind="text: ko.toJSON(events()[shownDayFormatted()])" ></textarea>
     </div>
 
     <div class="span5" style="margin-left: 10px;">

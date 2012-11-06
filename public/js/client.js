@@ -217,7 +217,8 @@ function ApplicationViewModel(){
             dataType: "json",
             success: function(data) {
 
-                self.addEventToFrontend(new Event(data)); // TODO get the new Event from the Server to give it the right _id (necessary for removing)
+                self.addEventToFrontend(new Event(data, false));
+
                 self.shownDay(newEvent.startDate);
 
             },

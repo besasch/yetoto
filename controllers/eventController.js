@@ -102,8 +102,6 @@ exports.createEvent = function(req, res) {
             console.log(':-( error saving new event');
             console.log(err);
         } else {
-            console.log(':-) new event successfully saved');
-            
                 // 2. Add the new event to the coresponding calendar document.
                 Calendar.findById(calendarId, function(err, calendar){
 
@@ -115,9 +113,12 @@ exports.createEvent = function(req, res) {
                         console.log(err);
                         res.send({ error: 'something blew up' }, 500); // TODO this doesn't quite work :-(
                     } else {
-                        console.log(':-) new event successfully added');
+                        Event.findById(newEvent)
+                        .populate('_calendar', 'picture')
+                        .exec(function(err, doc){
 
-                        res.send(JSON.stringify(newEvent), 200);
+                            res.send(JSON.stringify(doc), 200);
+                        });
                     }
                 });
 
