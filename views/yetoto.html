@@ -127,7 +127,8 @@
       <p  data-bind="text: content"><!-- le content --></p> 
     </div>
     <div class="modal-footer">
-      <button class="btn" data-bind="click: $root.deleteEvent">Delete Event</button>
+      <button class="btn pull-right" data-bind="click: $root.deleteEvent">Delete Event</button>
+      <button class="btn pull-right" data-bind="click: $root.goToUpdateEvent">Edit</button>
     </div>
   </div>
 
@@ -194,6 +195,51 @@
     </div>
     <div class="modal-footer">
       <button class="btn" data-bind="click: $root.addEvent">Save Event</button>
+    </div>
+  </div>
+
+  <!-- Modal Update Event -->
+  <div id="UpdateEventModal" class="modal fade hide" data-bind="with: newEventContainer">
+    <div class="modal-header" >
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h2>Update Event</h2>
+    </div>
+    <div class="modal-body">
+      <div class="control-group">
+        <label class="control-label">Title</label>
+        <div class="controls">
+          <input type="text" placeholder="What is going to happen..." data-bind="value: title">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">From</label>
+        <div class="controls">
+          <input type="text" placeholder="Starts at..." class="span2 init-timepicker" data-bind="value: inputStartTime">
+          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: inputStartDate" >
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Until</label>
+        <div class="controls">
+          <input type="text" placeholder="Ends at..." class="span2 init-timepicker" data-bind="value: inputEndTime">
+          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: inputEndDate">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Description</label>
+        <div class="controls">
+          <textarea type="text" placeholder="Additional Information..." class="span5" data-bind="value: content"></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Location</label>
+        <div class="controls">
+          <input type="text" placeholder="Where it will happen..." data-bind="value: location">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-bind="click: $root.updateEvent">Save Updates</button>
     </div>
   </div>
 

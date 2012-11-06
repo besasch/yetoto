@@ -74,6 +74,49 @@ function ApplicationViewModel(){
         }, false);
     };
 
+    self.goToUpdateEvent = function(chosenEvent) {
+
+        $('#ShowEventModal').modal('hide');
+
+        chosenEvent.inputStartDate   = moment(chosenEvent.startDate).format('DD.MM.YYYY');
+        chosenEvent.inputStartTime   = moment(chosenEvent.startDate).format('HH:mm');
+        chosenEvent.inputEndDate     = moment(chosenEvent.endDate).format('DD.MM.YYYY');
+        chosenEvent.inputEndTime     = moment(chosenEvent.endDate).format('HH:mm');
+
+        self.newEventContainer(chosenEvent);
+
+        $('.init-timepicker').timepicker({ 'timeFormat': 'H:i' });
+        $('.init-datepicker').datepicker({ 'dateFormat': 'dd.mm.yy' });
+
+        // Show the modal for the user to modify the data
+        $('#UpdateEventModal').modal('show');
+    };
+
+    self.updateEvent = function(){
+        $('#UpdateEventModal').modal('hide');
+
+        // Get the new Calendar out of the container variable
+        var updatedEvent          = self.newEventContainer();
+
+        // Send the event to the server
+        $.ajax({
+            type: 'POST',
+            url: '/data/updateevent',
+            data: {
+                "data": JSON.stringify(updatedEvent)
+            },
+            dataType: "json",
+            success: function(data) {
+
+                self.updateEventToFrontend(data);
+                
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('error ' + textStatus + " " + errorThrown);
+            }
+        });
+    };
+
     self.goToEditCalendar = function(chosenCalendar) {
 
         $('#ShowCalendarModal').modal('hide');
@@ -183,8 +226,7 @@ function ApplicationViewModel(){
         
         // Initiate timepickers and datepickers
         $('.init-timepicker').timepicker({ 'timeFormat': 'H:i' });
-        $('.init-datepicker').datepicker({ 'dateFormat': 'dd.mm.yy' }); //jquery-ui datepicker
-        //$('.init-datepicker').datepicker({ 'format': 'dd.mm.yy' }); //bootstrap datepicker
+        $('.init-datepicker').datepicker({ 'dateFormat': 'dd.mm.yy' });
         
         // Show the modal for the user to modify the data
         $('#NewEventModal').modal('show');
@@ -426,6 +468,26 @@ function ApplicationViewModel(){
 
     };
 
+    self.updateEventToFrontend = function(eventObj){
+
+        var key        = moment(eventObj.startDate).format("DD.MM.YYYY");
+        var valueArray = self.events()[key];
+        var value      = new Event(eventObj, false);
+
+
+        for (var i = 0; i < valueArray.length; i++) {
+
+            if(valueArray[i]._id == eventObj._id){
+                
+                valueArray.slice(i, 1, value);
+                self.events()[key] = valueArray;
+
+                break;
+
+            }
+        }
+    };
+
     self.removeEventFromFrontend = function(eventObj){
 
         var key = moment(eventObj.startDate).format("DD.MM.YYYY");
@@ -445,7 +507,6 @@ function ApplicationViewModel(){
 
     };
 
-    // Initialize the ViewModal
     self.loadData();
     
 }

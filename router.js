@@ -38,6 +38,8 @@ module.exports = function(app){
 
 	app.post('/data/:cal_id/newevent', eventController.createEvent);
 
+	app.post('/data/updateevent', eventController.updateEvent);
+
 	app.post('/data/newcalendar', calendarController.createCalendar);
 
 	app.post('/data/updatecalendar', calendarController.updateCalendar);

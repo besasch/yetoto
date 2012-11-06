@@ -69,7 +69,36 @@ exports.deleteEvent = function(req, res) {
 
 };
 
+exports.updateEvent = function(req, res){
 
+    var calendarId = req.params.cal_id;
+
+    var receivedEvent = JSON.parse(req.body.data);
+
+    Event.findById(receivedEvent._id, function(err, eventdoc){
+        if(err) {
+            console.log(":-( Finding event failed.");
+        } else {
+            eventdoc.title = receivedEvent.title;
+            eventdoc.content = receivedEvent.content;
+            eventdoc.startDate = receivedEvent.startDate;
+            eventdoc.endDate = receivedEvent.endDate;
+            eventdoc.location = receivedEvent.location;
+
+            eventdoc.save(function(err){
+                if(err){
+                    console.log(":-( Updating event failed.");
+                } else {
+
+                    res.send(JSON.stringify(eventdoc), 200);
+
+                }
+
+
+            });
+        }
+    });
+};
 
 /**
  * Adds a new event entity to the database
