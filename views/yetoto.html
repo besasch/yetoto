@@ -118,7 +118,7 @@
   </div>
 
   <!-- Modal Show Event -->
-  <div id="ShowEventModal" class="modal fade hide" data-bind="with: chosenEventContainer">
+  <div id="ShowEventModal" class="modal fade hide" data-bind="with: eventContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
       <h3 data-bind="text: title"><!-- le title --></h3>
@@ -133,7 +133,7 @@
   </div>
 
   <!-- Modal Show Calendar -->
-  <div id="ShowCalendarModal" class="modal fade hide" data-bind="with: chosenCalendarContainer">
+  <div id="ShowCalendarModal" class="modal fade hide" data-bind="with: calendarContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
       <div class="pull-left" style="margin-right: 10px;">
@@ -148,13 +148,13 @@
     <div class="modal-footer">
 
       <button class="btn pull-right" data-bind="click: $root.subscribeCalendar">Subscribe</button>
-      <button class="btn pull-right" data-bind="{visible: isOwner, click: $root.goToEditCalendar}">Edit</button>
+      <button class="btn pull-right" data-bind="{visible: isOwner, click: $root.goToUpdateCalendar}">Edit</button>
 
     </div>
   </div>
 
   <!-- Modal New Event -->
-  <div id="NewEventModal" class="modal fade hide" data-bind="with: newEventContainer">
+  <div id="NewEventModal" class="modal fade hide" data-bind="with: eventContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
       <h2>Create New Event</h2>
@@ -199,7 +199,7 @@
   </div>
 
   <!-- Modal Update Event -->
-  <div id="UpdateEventModal" class="modal fade hide" data-bind="with: newEventContainer">
+  <div id="UpdateEventModal" class="modal fade hide" data-bind="with: eventContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
       <h2>Update Event</h2>
@@ -244,7 +244,7 @@
   </div>
 
   <!-- Modal New Calendar -->
-  <div id="NewCalendarModal" class="modal fade hide" data-bind="with: newCalendarContainer">
+  <div id="NewCalendarModal" class="modal fade hide" data-bind="with: calendarContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
       <h2>Create New Yetoto</h2>
@@ -282,7 +282,7 @@
 
 
 <!-- Modal Update Calendar -->
-  <div id="UpdateCalendarModal" class="modal fade hide" data-bind="with: newCalendarContainer">
+  <div id="UpdateCalendarModal" class="modal fade hide" data-bind="with: calendarContainer">
     <div class="modal-header" >
       <button type="button" class="close" data-dismiss="modal">×</button>
       <h2>Edit Yetoto</h2>
@@ -307,7 +307,6 @@
           <a href="#" id="fileSelectUpdate">
             <img id="updateCalendarPhoto" data-bind="attr: { src: picture }" class="pull-left" style="width: 70px; height: 70px; z-index:1080">
             <i class="icon-pencil" width="14" height="14" style="background-color: white; opacity: 0.5; margin: 56px 0px 0px -14px; position: absolute; z-index: 1090;"></i>
-
           </a>
           
           <input type="file" id="fileElemUpdate" accept="image/*" style="display:none" onchange="handleImage(this.files, 'updateCalendarPhoto')">
@@ -340,11 +339,8 @@
     </div>
 
     <div class="span5" style="margin-left: 10px;">
-      <label>Chosen Event Container:</label>
-      <textarea style="width:350px; height:80px;" data-bind="text: ko.toJSON(chosenEventContainer)"></textarea>
-      <br>
-      <label>Chosen Calendar Container:</label>
-      <textarea style="width:350px; height:80px;" data-bind="text: ko.toJSON(chosenCalendarContainer)"></textarea>
+      <label>Event Modal Container:</label>
+      <textarea style="width:350px; height:80px;" data-bind="text: ko.toJSON(eventContainer)"></textarea>
     </div>
 
   </div>

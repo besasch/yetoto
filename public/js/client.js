@@ -1,134 +1,130 @@
 function ApplicationViewModel(){
 	
-    var self = this;
+    var self                     = this;
 
-    // Data
-    self.todaysDate        = moment(); // Contains today's date
-    self.shownDay          = ko.observable(); // Contains the date of the day shown on the frontend
-    self.shownDayFormatted = ko.computed(function() { // Contains the formatted date
-        return moment(self.shownDay()).format("DD.MM.YYYY");
-    });
+    self.todaysDate              = moment(); // Contains today's date
+    self.shownDay                = ko.observable(); // Contains the date of the day shown on the frontend
+    self.shownDayFormatted       = ko.computed(function() { // Contains the formatted date
+            return moment(self.shownDay()).format("DD.MM.YYYY");
+        });
 
-    self.newEventContainer    = ko.observable();
-    self.chosenEventContainer = ko.observable();
+    self.events                  = ko.observable({});
+    self.user                    = ko.observable({});
+    self.calendars               = ko.observableArray();
+
+    self.eventContainer          = ko.observable();
+    self.calendarContainer       = ko.observable();
+
+    self.searchTerm              = ko.observable();
+    self.searchResults           = ko.observableArray();
 
 
-    self.calendars              = ko.observableArray();
-    self.newCalendarContainer   = ko.observable();
+
+/*        88   ad88888ba   88888888888  88888888ba       888b      88         db   8b           d8
+88        88  d8"     "8b  88           88      "8b      8888b     88        d88b  `8b         d8'
+88        88  Y8,          88           88      ,8P      88 `8b    88       d8'`8b  `8b       d8'
+88        88  `Y8aaaaa,    88aaaaa      88aaaaaa8P'      88  `8b   88      d8'  `8b  `8b     d8'
+88        88    `"""""8b,  88"""""      88""""88'        88   `8b  88     d8YaaaaY8b  `8b   d8'
+88        88          `8b  88           88    `8b        88    `8b 88    d8""""""""8b  `8b d8'
+Y8a.    .a8P  Y8a     a8P  88           88     `8b       88     `8888   d8'        `8b  `888'
+ `"Y8888Y"'    "Y88888P"   88888888888  88      `8b      88      `888  d8'          `8b  `*/
 
 
-    // Behaviour
-
-    self.deleteCalendar = function(calendar) {
-        
-        serverUrl = "/data/delete/" + calendar._id;
-    
-        $.ajax({
-                url: serverUrl,
-                type: 'post',
-                dataType: 'json',
-                success: function(data) {
-                    //Remove calendar also in Front End
-                    self.calendars.remove(calendar);
-                        
-                    //Remove Events from deleted calendar from Front End
-                    var i = data.events.length;
-
-                    while(i--){
-
-                        self.removeEventFromFrontend(new Event(data.events[i]));
-
-                    }
-
-                },
-
-                error: function(jqXHR, textStatus, errorThrown) {
-                alert('error ' + textStatus + " " + errorThrown);
-            }
-            });
-
-    };
-    
     self.goToNewCalendar = function() {
         
-        // Create some dummy data
-        var dummy = {title: "", description: ""};
-        
-        // Write the dummy data into the container
-        self.newCalendarContainer(new Calendar(dummy));
-       
-        // Show the modal for the user to modify the data
-        $('#NewCalendarModal').modal('show');
+        self.calendarContainer(new Calendar({title: '', description: ''}));
+        self.redirectClickEvent('fileSelect', 'fileElem');
+        self.openModal('NewCalendarModal');
+    };
 
+    self.goToUpdateCalendar = function(chosenCalendar) {
 
-        //Image Handling
-        var fileSelect = document.getElementById("fileSelect"),
-          fileElem = document.getElementById("fileElem");
-         
-
-        fileSelect.addEventListener("click", function (e) {
-          if (fileElem) {
-            fileElem.click();
-          }
-          e.preventDefault(); // prevent navigation to "#"
-        }, false);
+        self.closeModals();
+        self.calendarContainer(chosenCalendar);
+        self.redirectClickEvent('fileSelectUpdate', 'fileElemUpdate');
+        self.openModal('UpdateCalendarModal');
     };
 
     self.goToUpdateEvent = function(chosenEvent) {
 
-        $('#ShowEventModal').modal('hide');
+        self.closeModals();
 
         chosenEvent.inputStartDate   = moment(chosenEvent.startDate).format('DD.MM.YYYY');
         chosenEvent.inputStartTime   = moment(chosenEvent.startDate).format('HH:mm');
         chosenEvent.inputEndDate     = moment(chosenEvent.endDate).format('DD.MM.YYYY');
         chosenEvent.inputEndTime     = moment(chosenEvent.endDate).format('HH:mm');
 
-        self.newEventContainer(chosenEvent);
+        self.eventContainer(chosenEvent);
 
-        $('.init-timepicker').timepicker({ 'timeFormat': 'H:i' });
-        $('.init-datepicker').datepicker({ 'dateFormat': 'dd.mm.yy' });
+        self.enableDateAndTimePicker();
 
-        // Show the modal for the user to modify the data
-        $('#UpdateEventModal').modal('show');
+        self.openModal('UpdateEventModal');
     };
 
-    self.updateEvent = function(){
-        $('#UpdateEventModal').modal('hide');
+    self.goToNewEvent = function(calendars) {
 
-        // Get the new Calendar out of the container variable
-        var updatedEvent          = self.newEventContainer();
-
-        // Send the event to the server
-        $.ajax({
-            type: 'POST',
-            url: '/data/updateevent',
-            data: {
-                "data": JSON.stringify(updatedEvent)
-            },
-            dataType: "json",
-            success: function(data) {
-
-                self.updateEventToFrontend(data);
-                
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                alert('error ' + textStatus + " " + errorThrown);
-            }
-        });
+        self.eventContainer(new Event({
+                title: "", content: "", startDate: moment(), endDate: moment(),
+                location: "", _calendar: calendars._id, inputStartDate: ""})
+            );
+        self.enableDateAndTimePicker();
+        self.openModal('NewEventModal');
     };
 
-    self.goToEditCalendar = function(chosenCalendar) {
+    self.goToTomorrow  = function() {
+        self.shownDay(moment(self.shownDay()).add('days', 1));
+    };
+    
+    self.goToYesterday = function() {
+        self.shownDay(moment(self.shownDay()).subtract('days', 1));
+    };
 
-        $('#ShowCalendarModal').modal('hide');
+    self.goToEvent     = function(chosenEvent) {
+        self.eventContainer(chosenEvent);
+        self.openModal('ShowEventModal');
+    };
 
-        self.newCalendarContainer(chosenCalendar);
+    self.goToCalendar     = function(chosenCalendar) {
+        self.calendarContainer(chosenCalendar);
+        self.openModal('ShowCalendarModal');
+    };
 
-        // Show the modal for the user to modify the data
-        $('#UpdateCalendarModal').modal('show');
 
-                //Image Handling
-        var fileSelectUpdate = document.getElementById("fileSelectUpdate"),
-          fileElemUpdate = document.getElementById("fileElemUpdate");
+
+/*        88    88       ad88888ba  888888888888  88        88  88888888888  88888888888
+88        88    88      d8"     "8b      88       88        88  88           88
+88        88    88      Y8,              88       88        88  88           88
+88        88    88      `Y8aaaaa,        88       88        88  88aaaaa      88aaaaa
+88        88    88        `"""""8b,      88       88        88  88"""""      88"""""
+88        88    88              `8b      88       88        88  88           88
+Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
+ `"Y8888Y"'     88       "Y88888P"       88        `"Y8888Y"'   88           */
+
+
+    self.openModal = function(domId) {
+        $('#' + domId).modal('show');
+    };
+
+    self.closeModals = function() {
+        $('.modal').modal('hide');
+    };
+
+    self.enableDropdowns = function(){
+        $('.dropdown-toggle').dropdown();
+    };
+
+    self.openSearchBox = function(){
+        $('#search-form').addClass('open');
+    };
+
+    self.closeSearchBox = function(){
+        $('#search-form').removeClass('open');
+    };
+
+    self.redirectClickEvent = function(fromId, toId){
+        //Image Handling
+        var fileSelectUpdate = document.getElementById(fromId);
+        var fileElemUpdate = document.getElementById(toId);
          
 
         fileSelectUpdate.addEventListener("click", function (e) {
@@ -137,180 +133,24 @@ function ApplicationViewModel(){
           }
           e.preventDefault(); // prevent navigation to "#"
         }, false);
-
     };
 
-    self.updateCalendar = function () {
-        $('#UpdateCalendarModal').modal('hide');
-
-        // Get the new Calendar out of the container variable
-        var updatedCalendar          = new Calendar(self.newCalendarContainer(), true);
-        
-        //Get type and data of uploaded image
-        var chosenImage = document.getElementById("updateCalendarPhoto").src;
-        var type = chosenImage.substring(chosenImage.indexOf("/") + 1, chosenImage.indexOf(";"));
-        var image = chosenImage.substring(chosenImage.indexOf(",") + 1);
-
-        // Send the event to the server
-        $.ajax({
-            type: 'POST',
-            url: '/data/updatecalendar',
-            data: {
-                "data": JSON.stringify(updatedCalendar),
-                "image": image,
-                "type": type
-            },
-            dataType: "json",
-            success: function(data) {
-
-                // Update calendar observable
-                for (var i = 0; i < self.calendars().length; i++) {
-                    if(self.calendars()[i]._id == data._id){
-                        
-                        self.calendars.splice(i, 1, new Calendar(data, true));
-                        break;
-                    }
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                alert('error ' + textStatus + " " + errorThrown);
-            }
-        });
-
-    };
-
-    self.addCalendar = function() {
-        // Get the new Calendar out of the container variable
-        var newCalendar          = new Calendar(self.newCalendarContainer(), true);
-        
-        //Get type and data of uploaded image
-        var chosenImage = document.getElementById("newCalendarPhoto").src;
-        var type = chosenImage.substring(chosenImage.indexOf("/") + 1, chosenImage.indexOf(";"));
-        var image = chosenImage.substring(chosenImage.indexOf(",") + 1);
-
-        // Send the event to the server
-        $.ajax({
-            type: 'POST',
-            url: '/data/newcalendar',
-            data: {
-                "data": JSON.stringify(newCalendar),
-                "image": image,
-                "type": type
-            },
-            dataType: "json",
-            success: function(data) {
-                // Push the Calendar into the view array when done
-                self.calendars.push(new Calendar(data, true));
-                
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                alert('error ' + textStatus + " " + errorThrown);
-            }
-        });
-
-        // Close Modal
-        $('#NewCalendarModal').modal('hide');
-
-        // Empty the container variable
-        self.newCalendarContainer(null);
-
-    };
-    self.goToNewEvent = function(calendars) {
-    
-        // Create some dummy data
-        var dummy = {title: "", content: "", startDate: moment(), endDate: moment(),
-        location: "", _calendar: calendars._id, inputStartDate: ""};
-        
-        // Write the dummy data into the container
-        self.newEventContainer(new Event(dummy));
-        
-        // Initiate timepickers and datepickers
+    self.enableDateAndTimePicker = function(){
         $('.init-timepicker').timepicker({ 'timeFormat': 'H:i' });
         $('.init-datepicker').datepicker({ 'dateFormat': 'dd.mm.yy' });
-        
-        // Show the modal for the user to modify the data
-        $('#NewEventModal').modal('show');
-    };
-
-    /*
-     * Adds a new Event to the array and to the server
-     * This function gets its data from the container variable newEventContainer
-     */
-
-    self.addEvent = function() {
-        // Get the new event out of the container variable
-        var newEvent           = new Event(self.newEventContainer());
-        
-        // Empty the container variable
-        self.newEventContainer(null);
-        
-        // Calculate start and end date accorrding to the users inputs
-        newEvent.startDate = moment(newEvent.inputStartDate+" "+newEvent.inputStartTime, "DD.MM.YYYY H:mm");
-        newEvent.endDate   = moment(newEvent.inputEndDate+" "+newEvent.inputEndTime, "DD.MM.YYYY H:mm");
-
-
-        // Send the event to the server
-        $.ajax({
-            type: 'POST',
-            url: '/data/' + newEvent._calendar + '/newevent',
-            data: {
-                "data": JSON.stringify(newEvent)
-            },
-            dataType: "json",
-            success: function(data) {
-
-                self.addEventToFrontend(new Event(data, false));
-
-                self.shownDay(newEvent.startDate);
-
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                alert('error ' + textStatus + " " + errorThrown);
-            }
-        });
-
-        // Close Modal
-        $('#NewEventModal').modal('hide');
-    };
-
-    self.deleteEvent = function(chosenEvent){
-
-        var serverUrl = '/data/events/' + chosenEvent._id + '/delete';
-
-        $.ajax({
-            type: 'POST',
-            url: serverUrl,
-            dataType: 'json',
-            success: function(data) {
-
-                self.removeEventFromFrontend(chosenEvent);
-
-                $('#ShowEventModal').modal('hide');
-
-                self.shownDay(chosenEvent.startDate);
-
-            }
-        });
     };
 
 
-    self.goToTomorrow  = function() {
-        self.shownDay(moment(self.shownDay()).add('days', 1)); // Set shownDate to the next day
-    };
-    
-    self.goToYesterday = function() {
-        self.shownDay(moment(self.shownDay()).subtract('days', 1)); // Set shownDate to the next day
-    };
-    
-    
-    /*
-    * Shows a modal to the user containing all data for a specific event
-    */
-    self.goToEvent     = function(chosenEvent) {
-        self.chosenEventContainer(chosenEvent);
-        $('#ShowEventModal').modal('show');
-    };
-    
+/*888888ba,         db    888888888888    db              ad88888ba  888888888888  ,ad8888ba,    88888888ba   88888888888
+88      `"8b       d88b        88        d88b            d8"     "8b      88      d8"'    `"8b   88      "8b  88
+88        `8b     d8'`8b       88       d8'`8b           Y8,              88     d8'        `8b  88      ,8P  88
+88         88    d8'  `8b      88      d8'  `8b          `Y8aaaaa,        88     88          88  88aaaaaa8P'  88aaaaa
+88         88   d8YaaaaY8b     88     d8YaaaaY8b           `"""""8b,      88     88          88  88""""88'    88"""""
+88         8P  d8""""""""8b    88    d8""""""""8b                `8b      88     Y8,        ,8P  88    `8b    88
+88      .a8P  d8'        `8b   88   d8'        `8b       Y8a     a8P      88      Y8a.    .a8P   88     `8b   88
+88888888Y"'  d8'          `8b  88  d8'          `8b       "Y88888P"       88       `"Y8888Y"'    88      `8b  888888888*/
+
+
     self.hideCalendar = function(calendars){
         calendars.isHidden(true);
         for(var i = 0; i < self.events().length; i++) {
@@ -327,113 +167,6 @@ function ApplicationViewModel(){
         }
     };
 
-    // SEARCH
-
-    self.searchTerm = ko.observable();
-    self.searchResults = ko.observableArray();
-
-    self.searchTerm.subscribe(function () {
-
-        $('.dropdown-toggle').dropdown();
-
-        if(self.searchTerm().length > 2){
-            
-            serverUrl = "/data/search/" + self.searchTerm();
-
-            $('#search-form').addClass('open');
-
-            $.ajax({
-            url: serverUrl,
-            dataType: 'json',
-            success: function(data) {
-
-                    if (data.calendarResults.length > 0){
-
-                        var mappedCalendars = [];
-
-                        for(var i = 0; i < data.calendarResults.length; i++) {
-                            mappedCalendars.push(new Calendar(data.calendarResults[i]));
-                        }
-                        self.searchResults(mappedCalendars);
-    
-                    } else {
-
-                        self.searchResults([]);
-
-                    }
-                }
-            });
-        } else {
-            self.searchResults([]);
-            $('#search-form').removeClass('open');
-        }
-
-    });
-
-    // Calendar
-    self.chosenCalendarContainer = ko.observable();
-
-    self.goToCalendar     = function(chosenCalendar) {
-        self.chosenCalendarContainer(chosenCalendar);
-        $('#ShowCalendarModal').modal('show');
-    };
-
-    self.subscribeCalendar = function() {
-        var cal = self.chosenCalendarContainer();
-
-        var serverUrl = '/data/subscribe/' + cal._id;
-
-        $.ajax({
-            url: serverUrl,
-            dataType: 'json',
-            success: function(data) {
-                self.calendars.push(cal);
-            }
-        });
-    };
-
-    self.unsubscribeCalendar = function(chosenCalendar) {
-
-        var serverUrl = '/data/unsubscribe/' + chosenCalendar._id;
-
-        $.ajax({
-            url: serverUrl,
-            dataType: 'json',
-            success: function(data) {
-                self.calendars.remove(chosenCalendar);
-            }
-        });
-
-    };
-
-    // Load Data
-    
-    self.events = ko.observable({});
-    self.user   = ko.observable({});
-
-    self.loadData = function(){
-
-        $.ajax({
-            url: '/data/all',
-            dataType: 'json',
-            success: function(data) {
-                self.user(data.user);
-                var eventList = data.events;
-
-                self.calendarsInit(data.user);
-
-                // Put the events into the self.day object
-                for (var i = 0; i < eventList.length; i++) {
-                    self.addEventToFrontend(eventList[i]);
-                }
-
-                self.shownDay(self.todaysDate); // Set shownDate to today's date
-
-            }
-
-        });
-    };
-
     self.calendarsInit  = function(data){
 
         var mappedCalendars = [];
@@ -446,10 +179,7 @@ function ApplicationViewModel(){
             mappedCalendars.push(new Calendar(data.subscriptions[j], false));
         }
         self.calendars(mappedCalendars);
-
     };
-
-
 
 
     self.addEventToFrontend = function(eventObj){
@@ -461,7 +191,8 @@ function ApplicationViewModel(){
             self.events()[key].push(value);
 
         } else {
-            var newArray = new Array(value);
+            var newArray = ko.observableArray();
+            newArray.push(value);
 
             self.events()[key] = newArray;
         }
@@ -474,42 +205,314 @@ function ApplicationViewModel(){
         var valueArray = self.events()[key];
         var value      = new Event(eventObj, false);
 
-
         for (var i = 0; i < valueArray.length; i++) {
 
             if(valueArray[i]._id == eventObj._id){
                 
                 valueArray.slice(i, 1, value);
                 self.events()[key] = valueArray;
-
                 break;
-
             }
         }
     };
 
     self.removeEventFromFrontend = function(eventObj){
 
-        var key = moment(eventObj.startDate).format("DD.MM.YYYY");
+        var key         = moment(eventObj.startDate).format('DD.MM.YYYY');
         var eventsArray = self.events()[key];
 
+        // DAFUQ Warum geht das plötzlich nicht mehr???
 
         for(var i = 0; i < eventsArray.length; i++ ){
             
             if(eventsArray[i]._id == eventObj._id){
             
-                eventsArray.splice(i,1);
-            
+                eventsArray.splice(i, 1);
+                self.events()[key] = eventsArray;
+                break;
             }
         }
-
-        self.events()[key] = eventsArray;
-
+        self.closeModals();
+        self.shownDay(eventObj.startDate);
     };
+
+    self.removeCalendarFromFrontend = function(data, calendar){
+        //Remove calendar also in Front End
+        self.calendars.remove(calendar);
+        
+        //Remove Events from deleted calendar from Front End
+        var i = data.events.length;
+        while(i--){
+            self.removeEventFromFrontend(data.events[i]);
+        }
+    };
+
+    self.updateCalendarOnFrontend = function(updatedCalendarData){
+        for (var i = 0; i < self.calendars().length; i++) {
+            if(self.calendars()[i]._id == updatedCalendarData._id){
+                
+                self.calendars.splice(i, 1, new Calendar(updatedCalendarData, true));
+                break;
+            }
+        }
+    };
+
+    self.addUserCalendarToFrontend = function(newCalendarData){
+
+        self.calendars.push(new Calendar(newCalendarData, true));
+    };
+
+    self.addSubscriptionToFrontend = function(newCalendarData){
+
+        self.calendars.push(new Calendar(newCalendarData, false));
+    };
+
+    self.removeSubscriptionFromFrontend = function(chosenCalendar){
+        self.calendars.remove(chosenCalendar);
+    };
+
+
+    self.searchTerm.subscribe(function () {
+
+        self.enableDropdowns();
+
+        if(self.searchTerm().length > 2){
+
+            self.openSearchBox();
+
+            // Call the server for serach results and pass it a callback to process the results data
+            self.loadSearchResults(function(results) {
+
+                if (results.calendarResults.length > 0){
+
+                    var mappedCalendars = [];
+
+                    for(var i = 0; i < results.calendarResults.length; i++) {
+                        mappedCalendars.push(new Calendar(results.calendarResults[i]));
+                    }
+                    self.searchResults(mappedCalendars);
+
+                } else {
+
+                    self.searchResults([]);
+                }
+            });
+
+        } else {
+            self.searchResults([]);
+            self.closeSearchBox();
+        }
+    });
+
+
+       /*                88        db         8b        d8
+      d88b               88       d88b         Y8,    ,8P
+     d8'`8b              88      d8'`8b         `8b  d8'
+    d8'  `8b             88     d8'  `8b          Y88P
+   d8YaaaaY8b            88    d8YaaaaY8b         d88b
+  d8""""""""8b           88   d8""""""""8b      ,8P  Y8,
+ d8'        `8b  88,   ,d88  d8'        `8b    d8'    `8b
+d8'          `8b  "Y8888P"  d8'          `8b  8P        */
+
+
+    self.deleteCalendar = function(calendar) {
+    
+        $.ajax({
+            url: '/data/delete/' + calendar._id,
+            type: 'post',
+            dataType: 'json',
+            success: function(data) {
+                self.removeCalendarFromFrontend(data, calendar);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('error ' + textStatus + " " + errorThrown);
+            }
+        });
+    };
+    
+    self.updateEvent = function(){
+        self.closeModals();
+
+        $.ajax({
+            type: 'POST',
+            url: '/data/updateevent',
+            data: { "data": JSON.stringify(self.eventContainer()) },
+            dataType: "json",
+            success: function(data) {
+                self.updateEventToFrontend(data);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('error ' + textStatus + " " + errorThrown);
+            }
+        });
+    };
+
+    self.updateCalendar = function () {
+        self.closeModals();
+        
+        //Get type and data of uploaded image
+        var chosenImage = document.getElementById('updateCalendarPhoto').src;
+        var type = chosenImage.substring(chosenImage.indexOf('/') + 1, chosenImage.indexOf(';'));
+        var image = chosenImage.substring(chosenImage.indexOf(',') + 1);
+
+        $.ajax({
+            type: 'POST',
+            url: '/data/updatecalendar',
+            data: {
+                "data": JSON.stringify(self.calendarContainer()),
+                "image": image,
+                "type": type
+            },
+            dataType: 'json',
+            success: function(data) {
+                self.updateCalendarOnFrontend(data);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('error ' + textStatus + " " + errorThrown);
+            }
+        });
+    };
+
+    self.addCalendar = function() {
+        
+        //Get type and data of uploaded image
+        var chosenImage = document.getElementById('newCalendarPhoto').src;
+        var type = chosenImage.substring(chosenImage.indexOf('/') + 1, chosenImage.indexOf(';'));
+        var image = chosenImage.substring(chosenImage.indexOf(',') + 1);
+
+        $.ajax({
+            type: 'POST',
+            url: '/data/newcalendar',
+            data: {
+                "data": JSON.stringify(self.calendarContainer()),
+                "image": image,
+                "type": type
+            },
+            dataType: 'json',
+            success: function(data) {
+                self.addUserCalendarToFrontend(data);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('error ' + textStatus + " " + errorThrown);
+            }
+        });
+        self.closeModals();
+    };
+
+    self.addEvent = function() {
+        var newEvent           = self.eventContainer();
+        
+        // Calculate start and end date accorrding to the users inputs
+        newEvent.startDate = moment(newEvent.inputStartDate+" "+newEvent.inputStartTime, "DD.MM.YYYY H:mm");
+        newEvent.endDate   = moment(newEvent.inputEndDate+" "+newEvent.inputEndTime, "DD.MM.YYYY H:mm");
+
+        // Send the event to the server
+        $.ajax({
+            type: 'POST',
+            url: '/data/' + newEvent._calendar + '/newevent',
+            data: {
+                "data": JSON.stringify(newEvent)
+            },
+            dataType: "json",
+            success: function(data) {
+                self.addEventToFrontend(new Event(data, false));
+                self.shownDay(newEvent.startDate);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('error ' + textStatus + " " + errorThrown);
+            }
+        });
+        self.closeModals();
+    };
+
+    self.deleteEvent = function(chosenEvent){
+
+        $.ajax({
+            type: 'POST',
+            url: '/data/events/' + chosenEvent._id + '/delete',
+            dataType: 'json',
+            success: function(data) {
+                self.removeEventFromFrontend(chosenEvent);
+            }
+        });
+    };
+
+    self.subscribeCalendar = function() {
+        var cal = self.calendarContainer();
+
+        $.ajax({
+            url: '/data/subscribe/' + cal._id,
+            dataType: 'json',
+            success: function(data) {
+                self.addSubscriptionToFrontend(data);
+            }
+        });
+    };
+
+    self.unsubscribeCalendar = function(chosenCalendar) {
+
+        var serverUrl = '/data/unsubscribe/' + chosenCalendar._id;
+
+        $.ajax({
+            url: serverUrl,
+            dataType: 'json',
+            success: function(data) {
+                self.removeSubscriptionFromFrontend(chosenCalendar);
+            }
+        });
+    };
+
+    self.loadSearchResults = function(cb){
+        $.ajax({
+            url: '/data/search/' + self.searchTerm(),
+            dataType: 'json',
+            success: function(data) {
+                cb(data);
+            }
+        });
+    };
+
+    self.loadData = function(){
+
+        $.ajax({
+            url: '/data/all',
+            dataType: 'json',
+            success: function(data) {
+                self.user(data.user);
+                var eventList = data.events;
+
+                self.calendarsInit(data.user);
+
+                // Put the events into the self.events object
+                for (var i = 0; i < eventList.length; i++) {
+                    self.addEventToFrontend(eventList[i]);
+                }
+
+                self.shownDay(self.todaysDate); // Set shownDate to today's date
+
+            }
+
+        });
+    };
+
+
 
     self.loadData();
     
 }
+
+
+/*888888888  888b      88  88888888ba,
+88           8888b     88  88      `"8b
+88           88 `8b    88  88        `8b
+88aaaaa      88  `8b   88  88         88
+88"""""      88   `8b  88  88         88
+88           88    `8b 88  88         8P
+88           88     `8888  88      .a8P
+88888888888  88      `888  8888888*/
+
+
+
 
 function Event(data, isHidden) {
     var self              = this;
@@ -544,13 +547,6 @@ function Event(data, isHidden) {
 
     self.isHidden         = ko.observable(isHidden);
 }
-
-/**
- * ViewModel to show events to the user
- */
-
-
-
 
 // 1.) Am Anfang: Alle abonniereten und eigenen Kalender laden
 	

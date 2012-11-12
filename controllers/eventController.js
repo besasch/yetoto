@@ -57,7 +57,7 @@ exports.deleteEvent = function(req, res) {
 
                         } else {
 
-                            res.send({data: "success!"}, 200);
+                            res.send(JSON.stringify(eventObj), 200);
 
                         }
                     

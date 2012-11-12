@@ -81,7 +81,7 @@ exports.subscribeCalendar = function (req, res){
 					console.log(err);
 					// TODO Inform frontend of an error
 				}else{
-					res.send(JSON.stringify({data: "success!"}), 200);
+					res.send(JSON.stringify(doc), 200);
 				}
 			});
 		}

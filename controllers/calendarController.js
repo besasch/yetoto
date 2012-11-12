@@ -44,7 +44,7 @@ exports.updateCalendar = function(req, res){
         calendar.save(function(err){
 
             if (err) {
-                console.log(':-( Error updating new calendar'); 
+                console.log(':-( Error updating new calendar');
                 console.log(err);
             } else {
                 console.log(':-) calendar update successful');
@@ -155,11 +155,7 @@ exports.deleteCalendar = function(req, res) {
                     }
                 });
             }
-
-
             CalendarToBeDeleted.remove();
-
-            console.log('calendar deleted');
         }
     });
     
