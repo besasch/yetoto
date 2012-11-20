@@ -81,8 +81,8 @@ exports.updateEvent = function(req, res){
         } else {
             eventdoc.title = receivedEvent.title;
             eventdoc.content = receivedEvent.content;
-            eventdoc.startDate = receivedEvent.startDate;
-            eventdoc.endDate = receivedEvent.endDate;
+            eventdoc.startDate = receivedEvent.startDate._d;
+            eventdoc.endDate = receivedEvent.endDate._d;
             eventdoc.location = receivedEvent.location;
 
             eventdoc.save(function(err){

@@ -104,7 +104,7 @@
     <div id="events" data-bind="foreach: events()[shownDayFormatted()]">
       <div class="event" data-bind="visible: !isHidden()">
         <a href="" data-bind="click: $root.goToEvent"><span class="fulllink"></span></a>
-        <img data-bind="attr: { src: _calendar.picture }" style="width: 50px; height: 50px;">
+        <img data-bind="attr: { src: picture }" style="width: 50px; height: 50px;">
         <span class="time" data-bind="text: startTime"></span>
         <div class="controls">
           <!-- controls -->
@@ -169,15 +169,17 @@
       <div class="control-group">
         <label class="control-label">From</label>
         <div class="controls">
-          <input type="text" placeholder="Starts at..." class="span2 init-timepicker" data-bind="value: inputStartTime">
-          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: inputStartDate" >
+          <input type="text" placeholder="Starts at..." class="span2 init-timepicker" data-bind="value: startTime">
+          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: startDay" >
+          <span data-bind="text: startDate"></span>
         </div>
       </div>
       <div class="control-group">
         <label class="control-label">Until</label>
         <div class="controls">
-          <input type="text" placeholder="Ends at..." class="span2 init-timepicker" data-bind="value: inputEndTime">
-          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: inputEndDate">
+          <input type="text" placeholder="Ends at..." class="span2 init-timepicker" data-bind="value: endTime">
+          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: endDay">
+          <span data-bind="text: endDate"></span>
         </div>
       </div>
       <div class="control-group">
@@ -214,15 +216,15 @@
       <div class="control-group">
         <label class="control-label">From</label>
         <div class="controls">
-          <input type="text" placeholder="Starts at..." class="span2 init-timepicker" data-bind="value: inputStartTime">
-          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: inputStartDate" >
+          <input type="text" placeholder="Starts at..." class="span2 init-timepicker" data-bind="value: startTime">
+          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: startDay" >
         </div>
       </div>
       <div class="control-group">
         <label class="control-label">Until</label>
         <div class="controls">
-          <input type="text" placeholder="Ends at..." class="span2 init-timepicker" data-bind="value: inputEndTime">
-          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: inputEndDate">
+          <input type="text" placeholder="Ends at..." class="span2 init-timepicker" data-bind="value: endTime">
+          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: endDay">
         </div>
       </div>
       <div class="control-group">

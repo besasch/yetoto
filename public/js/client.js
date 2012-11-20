@@ -5,7 +5,7 @@ function ApplicationViewModel(){
     self.todaysDate              = moment(); // Contains today's date
     self.shownDay                = ko.observable(); // Contains the date of the day shown on the frontend
     self.shownDayFormatted       = ko.computed(function() { // Contains the formatted date
-            return moment(self.shownDay()).format("DD.MM.YYYY");
+            return moment(self.shownDay()).format('DD.MM.YYYY');
         });
 
     self.events                  = ko.observable({});
@@ -48,24 +48,16 @@ Y8a.    .a8P  Y8a     a8P  88           88     `8b       88     `8888   d8'     
     self.goToUpdateEvent = function(chosenEvent) {
 
         self.closeModals();
-
-        chosenEvent.inputStartDate   = moment(chosenEvent.startDate).format('DD.MM.YYYY');
-        chosenEvent.inputStartTime   = moment(chosenEvent.startDate).format('HH:mm');
-        chosenEvent.inputEndDate     = moment(chosenEvent.endDate).format('DD.MM.YYYY');
-        chosenEvent.inputEndTime     = moment(chosenEvent.endDate).format('HH:mm');
-
         self.eventContainer(chosenEvent);
-
         self.enableDateAndTimePicker();
-
         self.openModal('UpdateEventModal');
     };
 
     self.goToNewEvent = function(calendars) {
 
         self.eventContainer(new Event({
-                title: "", content: "", startDate: moment(), endDate: moment(),
-                location: "", _calendar: calendars._id, inputStartDate: ""})
+                title: '', content: '', startDate: moment(), endDate: moment(),
+                location: '', _calendar: calendars._id})
             );
         self.enableDateAndTimePicker();
         self.openModal('NewEventModal');
@@ -184,8 +176,8 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
 
     self.addEventToFrontend = function(eventObj){
 
-        var key = moment(eventObj.startDate).format("DD.MM.YYYY");
         var value = new Event(eventObj, false);
+        var key   = value.startDay();
 
         if(self.events()[key]){
             self.events()[key].push(value);
@@ -201,9 +193,13 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
 
     self.updateEventToFrontend = function(eventObj){
 
-        var key        = moment(eventObj.startDate).format("DD.MM.YYYY");
+        // It somehow works with observables only :-D
+
+        /*
+        var key        = moment(eventObj.startDate).format('DD.MM.YYYY');
         var valueArray = self.events()[key];
         var value      = new Event(eventObj, false);
+
 
         for (var i = 0; i < valueArray.length; i++) {
 
@@ -214,24 +210,18 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
                 break;
             }
         }
+        */
     };
 
     self.removeEventFromFrontend = function(eventObj){
 
         var key         = moment(eventObj.startDate).format('DD.MM.YYYY');
         var eventsArray = self.events()[key];
+  
+        eventsArray.remove(function(item) {
+            return item._id ==  eventObj._id;
+        });
 
-        // DAFUQ Warum geht das plötzlich nicht mehr???
-
-        for(var i = 0; i < eventsArray.length; i++ ){
-            
-            if(eventsArray[i]._id == eventObj._id){
-            
-                eventsArray.splice(i, 1);
-                self.events()[key] = eventsArray;
-                break;
-            }
-        }
         self.closeModals();
         self.shownDay(eventObj.startDate);
     };
@@ -336,7 +326,7 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
         $.ajax({
             type: 'POST',
             url: '/data/updateevent',
-            data: { "data": JSON.stringify(self.eventContainer()) },
+            data: { "data": ko.toJSON(self.eventContainer())},
             dataType: "json",
             success: function(data) {
                 self.updateEventToFrontend(data);
@@ -359,7 +349,7 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
             type: 'POST',
             url: '/data/updatecalendar',
             data: {
-                "data": JSON.stringify(self.calendarContainer()),
+                "data": ko.toJSON(self.calendarContainer()),
                 "image": image,
                 "type": type
             },
@@ -384,7 +374,7 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
             type: 'POST',
             url: '/data/newcalendar',
             data: {
-                "data": JSON.stringify(self.calendarContainer()),
+                "data": ko.toJSON(self.calendarContainer()),
                 "image": image,
                 "type": type
             },
@@ -400,23 +390,19 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
     };
 
     self.addEvent = function() {
-        var newEvent           = self.eventContainer();
         
-        // Calculate start and end date accorrding to the users inputs
-        newEvent.startDate = moment(newEvent.inputStartDate+" "+newEvent.inputStartTime, "DD.MM.YYYY H:mm");
-        newEvent.endDate   = moment(newEvent.inputEndDate+" "+newEvent.inputEndTime, "DD.MM.YYYY H:mm");
+        var newEvent = self.eventContainer();
 
-        // Send the event to the server
         $.ajax({
             type: 'POST',
             url: '/data/' + newEvent._calendar + '/newevent',
             data: {
-                "data": JSON.stringify(newEvent)
+                "data": ko.toJSON(newEvent)
             },
             dataType: "json",
             success: function(data) {
-                self.addEventToFrontend(new Event(data, false));
-                self.shownDay(newEvent.startDate);
+                self.addEventToFrontend(data);
+                self.shownDay(newEvent.startDate());
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 alert('error ' + textStatus + " " + errorThrown);
@@ -432,7 +418,7 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
             url: '/data/events/' + chosenEvent._id + '/delete',
             dataType: 'json',
             success: function(data) {
-                self.removeEventFromFrontend(chosenEvent);
+                self.removeEventFromFrontend(data);
             }
         });
     };
@@ -518,11 +504,11 @@ function Event(data, isHidden) {
     var self              = this;
     
     self._id              = data._id;
-    self.title            = data.title;
-    self.content          = data.content;
+    self.title            = ko.observable(data.title);
+    self.content          = ko.observable(data.content);
     
-    self.startDate        = data.startDate;
-    self.endDate          = data.endDate;
+    self.startDate        = ko.observable(data.startDate);
+    self.endDate          = ko.observable(data.endDate);
     
     self.location         = data.location;
     self._calendar        = data._calendar;
@@ -530,33 +516,73 @@ function Event(data, isHidden) {
     self.modificationTime = data.modificationTime;
     self.owner            = data.owner;
     
-    self.startTime        = ko.computed(function() {
-    return moment(self.startDate).format('HH:mm');
-    }, self);
-    
-    self.endTime          = ko.computed(function() {
-    return moment(self.endDate).format('HH:mm');
-    }, self);
-    
-    
-    // Data to calculate start and enddate: PUT THIS INTO ANOTHER FUNCTION??
-    self.inputStartDate   = data.inputStartDate;
-    self.inputStartTime   = data.inputStartTime;
-    self.inputEndDate     = data.inputEndDate;
-    self.inputEndTime     = data.inputEndTime;
+    // Computed value that returns the picture TODO: retrieve the picture from the calendars array
+    self.picture          = ko.computed(function(){
+        return self._calendar.picture;
+    });
 
+    // Computed values that handle all reads and writes of dates
+    self.startDay         = ko.computed({
+        read:   function() {
+            return moment(self.startDate()).format('DD.MM.YYYY');
+        },
+        write:  function(day) {
+            var parsedMoment = moment(day, 'DD.MM.YYYY');
+            self.startDate(moment(self.startDate()).year(parsedMoment.year()));
+            self.startDate(moment(self.startDate()).month(parsedMoment.month() +1));
+            self.startDate(moment(self.startDate()).date(parsedMoment.date()));
+        },
+        owner:  self
+    });
+
+    self.endDay         = ko.computed({
+        read:   function() {
+            return moment(self.endDate()).format('DD.MM.YYYY');
+        },
+        write:  function(day) {
+            var parsedMoment = moment(day, 'DD.MM.YYYY');
+            self.endDate(moment(self.endDate()).year(parsedMoment.year()));
+            self.endDate(moment(self.endDate()).month(parsedMoment.month() +1));
+            self.endDate(moment(self.endDate()).date(parsedMoment.date()));
+        },
+        owner:  self
+    });
+
+    self.startTime         = ko.computed({
+        read:   function() {
+            return moment(self.startDate()).format('H:mm');
+        },
+        write:  function(time) {
+            var parsedMoment = moment(time, 'H:mm');
+            self.startDate(moment(self.startDate()).hours(parsedMoment.hours()));
+            self.startDate(moment(self.startDate()).minutes(parsedMoment.minutes()));
+        },
+        owner:  self
+    });
+
+    self.endTime         = ko.computed({
+        read:   function() {
+            return moment(self.endDate()).format('H:mm');
+        },
+        write:  function(time) {
+            var parsedMoment = moment(time, 'H:mm');
+            self.endDate(moment(self.endDate()).hours(parsedMoment.hours()));
+            self.endDate(moment(self.endDate()).minutes(parsedMoment.minutes()));
+        },
+        owner:  self
+    });
+    
     self.isHidden         = ko.observable(isHidden);
 }
 
-// 1.) Am Anfang: Alle abonniereten und eigenen Kalender laden
 	
 function Calendar(data, isOwner) {
 	var self = this;
 	
     self._id         = data._id;
-    self.title       = data.title;
-    self.picture     = data.picture;
-    self.description = data.description;
+    self.title       = ko.observable(data.title);
+    self.picture     = ko.observable(data.picture);
+    self.description = ko.observable(data.description);
     self.isOwner     = ko.observable(isOwner);
     self.isHidden    = ko.observable(false);
     
@@ -569,18 +595,18 @@ function handleImage(files, elementId) {
 
         var imageType = /image.*/;
          
-         
         var img = document.getElementById(elementId);
         img.file = file;
 
         var reader = new FileReader();
-        reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
+        reader.onload = (function(aImg) {
+            return function(e) {
+                aImg.src = e.target.result;
+            };
+        })(img);
         reader.readAsDataURL(file);
   }
 }
-
-
-
 
 
 ko.applyBindings(new ApplicationViewModel());
