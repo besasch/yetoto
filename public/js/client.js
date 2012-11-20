@@ -173,6 +173,10 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
         self.calendars(mappedCalendars);
     };
 
+    self.clearEventsFromFrontend = function(){
+        self.events({});
+    };
+
 
     self.addEventToFrontend = function(eventObj){
 
@@ -238,13 +242,15 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
     };
 
     self.updateCalendarOnFrontend = function(updatedCalendarData){
-        for (var i = 0; i < self.calendars().length; i++) {
+        /*for (var i = 0; i < self.calendars().length; i++) {
             if(self.calendars()[i]._id == updatedCalendarData._id){
                 
                 self.calendars.splice(i, 1, new Calendar(updatedCalendarData, true));
                 break;
             }
-        }
+        }*/
+        // Reload everything... efficient?
+        self.loadData();
     };
 
     self.addUserCalendarToFrontend = function(newCalendarData){
@@ -466,9 +472,8 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
             success: function(data) {
                 self.user(data.user);
                 var eventList = data.events;
-
                 self.calendarsInit(data.user);
-
+                self.clearEventsFromFrontend();
                 // Put the events into the self.events object
                 for (var i = 0; i < eventList.length; i++) {
                     self.addEventToFrontend(eventList[i]);
@@ -510,7 +515,7 @@ function Event(data, isHidden) {
     self.startDate        = ko.observable(data.startDate);
     self.endDate          = ko.observable(data.endDate);
     
-    self.location         = data.location;
+    self.location         = ko.observable(data.location);
     self._calendar        = data._calendar;
     self.creationTime     = data.creationTime;
     self.modificationTime = data.modificationTime;
@@ -522,7 +527,7 @@ function Event(data, isHidden) {
     });
 
     // Computed values that handle all reads and writes of dates
-    self.startDay         = ko.computed({
+    self.startDay = ko.computed({
         read:   function() {
             return moment(self.startDate()).format('DD.MM.YYYY');
         },
@@ -535,7 +540,7 @@ function Event(data, isHidden) {
         owner:  self
     });
 
-    self.endDay         = ko.computed({
+    self.endDay = ko.computed({
         read:   function() {
             return moment(self.endDate()).format('DD.MM.YYYY');
         },
@@ -548,7 +553,7 @@ function Event(data, isHidden) {
         owner:  self
     });
 
-    self.startTime         = ko.computed({
+    self.startTime = ko.computed({
         read:   function() {
             return moment(self.startDate()).format('H:mm');
         },
@@ -560,7 +565,7 @@ function Event(data, isHidden) {
         owner:  self
     });
 
-    self.endTime         = ko.computed({
+    self.endTime = ko.computed({
         read:   function() {
             return moment(self.endDate()).format('H:mm');
         },
@@ -571,7 +576,7 @@ function Event(data, isHidden) {
         },
         owner:  self
     });
-    
+
     self.isHidden         = ko.observable(isHidden);
 }
 
