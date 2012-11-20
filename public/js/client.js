@@ -193,6 +193,9 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
             self.events()[key] = newArray;
         }
 
+        self.events()[key].sort(function (eventA, eventB){
+            return moment(eventA.startDate()) - moment(eventB.startDate());
+        });
     };
 
     self.updateEventToFrontend = function(eventObj){
