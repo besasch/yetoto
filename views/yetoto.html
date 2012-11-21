@@ -60,20 +60,20 @@
   <div id="main" class="container">
 
     <!-- ActionBar -->
-    <div id="actionBar" style="padding-bottom: 100px;">
-          <li class="dropdown" style="float: left; list-style: none;">
-                <a href="#" data-bind='click: $root.goToNewCalendar'>
-                    <button class="btn btn-info" style="height: 80px;  width: 32px;">
-                        <i class="icon-plus icon-white"></i>
-                    </button>
-                </a>
-            </li>
+    <div id="actionBar" style="padding-bottom: 80px;">
+        <li class="dropdown" style="float: left; list-style: none;">
+            <a href="#" data-bind='click: $root.goToNewCalendar'>
+                <button class="btn" style="height: 80px;">
+                    <i class="icon-plus icon"></i>
+                </button>
+            </a>
+        </li>
         <ol class="unstyled" data-bind="foreach: calendars" >
             
             <li class="dropdown" id="calendars" style= "float: left; margin-left: 5px;">
-                <button class="dropdown-toggle thumbnail" data-toggle="dropdown">
+                <a href="#" class="dropdown-toggle thumbnail" data-toggle="dropdown">
                     <img data-bind="attr: { src: picture }" style="width: 70px; height: 70px;">
-                </button>
+                </a>
                 <ul class="dropdown-menu">
                     <li><a href="" data-bind="click: $root.goToCalendar"><i class="icon-info-sign"></i> <span data-bind="text: title"></span></a></li>
                     <li data-bind="visible: isOwner"><a href="#" class="addEvent" data-bind ="click: $root.goToNewEvent"><i class="icon-comment"></i> Add Event</a></li>
@@ -171,7 +171,6 @@
         <div class="controls">
           <input type="text" placeholder="Starts at..." class="span2 init-timepicker" data-bind="value: startTime">
           <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: startDay" >
-          <span data-bind="text: startDate"></span>
         </div>
       </div>
       <div class="control-group">
@@ -179,7 +178,6 @@
         <div class="controls">
           <input type="text" placeholder="Ends at..." class="span2 init-timepicker" data-bind="value: endTime">
           <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: endDay">
-          <span data-bind="text: endDate"></span>
         </div>
       </div>
       <div class="control-group">
