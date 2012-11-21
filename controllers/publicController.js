@@ -13,27 +13,21 @@ exports.goToApp = function(req, res){
     // If authenticated render app
     if (req.isAuthenticated()) {
 
-        res.render('yetoto.html', {
-            layout: false,
+        res.render('yetoto', {
             user: req.user
         });
     
     // Else go to login page
     } else {
-
-        res.render('index.ejs', {
-            layout:'public-layout',
+        res.render('index', {
             title: 'Welcome',
-            user: req.user
+            user: req.User
         });
-
-
     }
 };
 
 // ONLY FOR DEVELOPMENT
 exports.goToAppDEV = function(req, res){
-
 
         res.render('test.html', {
             layout: false

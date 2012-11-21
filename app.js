@@ -4,25 +4,19 @@ var MongoStore       = require('connect-mongo')(express);
 var passport         = require('passport');
 var CONFIG           = require('config');
 
+// Handle all authentication
 require('./authentication');
 
-var app = module.exports = express.createServer();
+var app = module.exports = express();
 
 // configure express
 app.configure(function(){
   app.set('views', __dirname + '/views');
-  app.set('view engine', 'ejs');
-  app.register('.html', {
-    compile: function(str, options){
-      return function(locals){
-        return str;
-      };
-    }
-  });
+  app.engine('.html', require('ejs').__express);
+  app.set('view engine', 'html');
   app.use(express.cookieParser());
   app.use(express.bodyParser({ keepExtensions: true, uploadDir: __dirname + "/public" + CONFIG.images.dir }));
   app.use(express.methodOverride());
-
   //app.use(express.session({ secret: "keyboard cat" }));
   app.use(express.session({
     secret: "victory cat",
@@ -56,7 +50,8 @@ require('./router')(app);
 
 
 // Start le app
-app.listen(CONFIG.server.port, function(){
-  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-});
+if (!module.parent) {
+  app.listen(3000);
+  console.log('Express started on port 3000');
+}
 
