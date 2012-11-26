@@ -13,11 +13,11 @@ var fs = require("fs");
  * URL Pattern: '/search/:term'
  */
 exports.searchCalendars = function(req, res) {
-        
+
     var searchterm = req.params.term;
 
     Calendar.searchCalendars(searchterm, function(err, calendardocs){
-        
+
         console.log("Search term: "+searchterm+" , Results: "+calendardocs.length);
 
         var outputObj = {
@@ -32,7 +32,7 @@ exports.searchCalendars = function(req, res) {
 exports.updateCalendar = function(req, res){
 
     var receivedCalendar = JSON.parse(req.body.data);
-    
+
     var image = req.body.image;
     var type = req.body.type;
 
@@ -41,37 +41,34 @@ exports.updateCalendar = function(req, res){
         calendar.description = receivedCalendar.description;
         calendar.modificationTime = new Date();
 
-        calendar.save(function(err){
+        if(imgHelp.isImageUpload(image)){
+            imgHelp.uploadBase64ToS3(image, type, calendar._id + "." + type, function(imageUrl){
+                calendar.picture = imageUrl;
+                calendar.save(function(err){
+                    if (err) {
+                        console.log(':-( Error updating new calendar' + err);
+                    } else {
+                        res.send(JSON.stringify(calendar), 200);
+                    }
 
-            if (err) {
-                console.log(':-( Error updating new calendar');
-                console.log(err);
-            } else {
-                console.log(':-) calendar update successful');
-
-                if(imgHelp.isImageUpload(image)){
-
-                    var location = CONFIG.images.dir + "/uploads/" + calendar._id + "." + type;
-
-                    imgHelp.saveBase64ToDisk(image, location, function(err) {
-                        if(err){
-                            console.log("Couldn't write image of calendar to disk, sorry. This is all I can say: " + err);
-                        }
-                    });
+                });
+            });
+        } else {
+            calendar.save(function(err){
+                if (err) {
+                    console.log(':-( Error updating new calendar' + err);
+                } else {
+                    res.send(JSON.stringify(calendar), 200);
                 }
 
-                res.send(JSON.stringify(calendar), 200);
-
-
-            }
-
-        });
+            });
+        }
     });
 
 };
 
 exports.createCalendar = function(req, res) {
-        
+
     var receivedCalendar = JSON.parse(req.body.data);
 
     var image = req.body.image;
@@ -88,48 +85,37 @@ exports.createCalendar = function(req, res) {
         newCalendar.picture = "/uploads/" + newCalendar._id + "." + type;
     }
 
-    newCalendar.save(function(err) {
-        if (err) {
-            console.log(':-( error saving new calendar');
-            console.log(err);
-        } else {
-            console.log(':-) new calendar successfully saved');
-            
-                // 2. Add the new calendar to the coresponding user document.
-                User.findById(req.user._id, function(err, user){
+    if(imgHelp.isImageUpload(image)){
+        imgHelp.uploadBase64ToS3(image, type, newCalendar._id + "." + type, function(imageUrl){ // s3 upload
+            newCalendar.picture = imageUrl;
+            newCalendar.save(function(err) {
+                if (err) {
+                    console.log(':-( error saving new calendar');
+                    console.log(err);
+                } else {
+                        User.findById(req.user._id, function(err, user){
 
-                    user.userCalendars.push(newCalendar);
+                            user.userCalendars.push(newCalendar);
 
-                    user.save(function(err) {
-                    if (err) {
-                        console.log(':-( error adding new calendar');
-                        console.log(err);
-                        res.send({ error: 'something blew up' }, 500); // TODO this doesn't quite work :-(
-                    } else {
-                        console.log(':-) new event successfully added');
+                            user.save(function(err) {
+                            if (err) {
+                                console.log(':-( error adding new calendar');
+                                console.log(err);
+                                res.send({ error: 'something blew up' }, 500); // TODO this doesn't quite work :-(
+                            } else {
+                                res.send(JSON.stringify(newCalendar), 200);
+                            }
+                        });
 
-                        if(imgHelp.isImageUpload(image)){
-
-                            var location = CONFIG.images.dir + "/uploads/" + newCalendar._id + "." + type;
-
-                            imgHelp.saveBase64ToDisk(image, location, function(err) {
-                                if(err){
-                                    console.log("Couldn't write image of calendar to disk, sorry. This is all I can say: " + err);
-                                }
-                            });
-                        }
-
-                        res.send(JSON.stringify(newCalendar), 200);
-                    }
-                });
-
+                    });
+                }
             });
-        }
-    });
-
+        });
+    }
 };
+
 exports.deleteCalendar = function(req, res) {
-        
+
     var userId  = req.params.userId;
     var CalendarToBeDeleted = new Calendar();
     CalendarToBeDeleted._id = req.params.calId;
@@ -145,20 +131,14 @@ exports.deleteCalendar = function(req, res) {
 
             // B. Delete Calendar Picture
             if(CalendarToBeDeleted.picture != CONFIG.defaults.calendarPicture){
-                fs.unlink(CONFIG.images.dir + CalendarToBeDeleted.picture, function(err){
-                    if(err){
-                        console.log("Couldn't remove calendar picture from disk. Sorry: " + err);
-                    }
-                    else{
-
-                        console.log("Calendar picture removed from disk.");
-                    }
+                imgHelp.deleteImgFromS3(CalendarToBeDeleted.picture, function(err){
+                    if(err){console.log(':-( Got an error deleting from S3: '+ err);}
                 });
             }
             CalendarToBeDeleted.remove();
         }
     });
-    
+
     // C. Delete Calendar from User
         // 1. Find Users who are owners of the calendar
     User.find( { 'userCalendars' : CalendarToBeDeleted }, function(err, result) {
@@ -174,10 +154,10 @@ exports.deleteCalendar = function(req, res) {
                 result[i].save();
             }
             console.log("Ownership of calendar have been removed.");
-            
+
         }
     });
- 
+
     // D. Delete Calendar Subscriptions
     // 1. Find Users who subscribed to the calendar
     User.find( { 'subscriptions' : CalendarToBeDeleted }, function(err, result) {
@@ -193,10 +173,9 @@ exports.deleteCalendar = function(req, res) {
                 result[i].save();
             }
             console.log("Subscriptions to calendar have been removed.");
-            
+
         }
     });
- 
 
     // E. Delete events from Calendar
     Event.find( { '_calendar' : CalendarToBeDeleted }, function(err, result) {
@@ -216,14 +195,11 @@ exports.deleteCalendar = function(req, res) {
             while(i--){
                 result[i].remove();
             }
-              
+
             console.log("Events from calendar have been removed.");
 
             res.send(JSON.stringify(outputObj), 200);
         }
     });
-
-
-    
 
 };

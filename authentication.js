@@ -16,7 +16,7 @@ passport.use(new FacebookStrategy({
     process.nextTick(function () {
 
       User.findOne({ 'accounts.uid': profile.id, 'accounts.provider': 'facebook' }, function(err, olduser) {
-        
+
           if(olduser) {
             console.log(':-) User-Login (' + olduser.firstname + ' ' + olduser.lastname + ')');
             done(null, olduser);
@@ -34,30 +34,20 @@ passport.use(new FacebookStrategy({
             usercalendar.owner = newuser._id;
 
             imageHelper.getFbRedirectUrl("http://graph.facebook.com/" + profile.id + "/?fields=picture",
-              function(picture){
-                console.log(profile);
-              imageHelper.getImg({
-                  url: picture.data.url,
-                  dest: __dirname + '/public' + CONFIG.images.dir + newuser._id + '.jpg'
-                },function(err){
-                  console.log(':-) image saved!');
-
-                  usercalendar.picture = CONFIG.images.dir + newuser._id + '.jpg';
-
-                  // After facebook picture is retrieved save everything!
-                  usercalendar.save(function(err) {
-                    if(err) { throw err; }
-                    console.log(':-) New calendar created');
-                    newuser.userCalendars.push(usercalendar);
-
-                    newuser.save(function(err) {
+              function(pictureUrl){
+                imageHelper.uploadImageToS3ByUrl(pictureUrl, profile.id + "." + 'jpg', function(imageUrl){
+                    usercalendar.picture = imageUrl;
+                    usercalendar.save(function(err) {
                       if(err) { throw err; }
-                      console.log(':-) New user created (' + newuser.firstname + ' ' + newuser.lastname + ')');
-                      done(null, newuser);
+                      newuser.userCalendars.push(usercalendar);
+                      newuser.save(function(err) {
+                        if(err) { throw err; }
+                        console.log(':-) New user created (' + newuser.firstname + ' ' + newuser.lastname + ')');
+                        done(null, newuser);
+                      });
                     });
-                  });
+                });
               });
-            });
           }
         });
     });
@@ -67,7 +57,7 @@ passport.use(new FacebookStrategy({
 
 // Passport session setup.
 passport.serializeUser(function(user, done) {
-  
+
   //console.log(':-) Serializing (' + user._id + ')');
 
   done(null, user._id);

@@ -17,13 +17,17 @@
         "dbname":       "yetoto",
         "url":          "mongodb://yetoto:yetoto@alex.mongohq.com:10037/yetoto"
     },
-    "fb": {
-        "appId": "  269877843120333",
-        "appSecret": "fc17812cc0b612569bc7cd664d480fab",
-        "callbackURL": "http://www.yeto.to:3000/auth/facebook/callback/"
+    "fb" : {
+        "appId"          : "  269877843120333",
+        "appSecret"      : "fc17812cc0b612569bc7cd664d480fab",
+        "callbackURL"    : "http://www.yeto.to:3000/auth/facebook/callback/"
     },
-
-    "defaults": {
+    "s3" : {
+        "key"            : "AKIAIRB3WUUBUJOR7H6A",
+        "secret"         : "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",
+        "bucket"         : "yetoto"
+    },
+    "defaults" : {
         "calendarPicture": "/img/photo.jpg"
     }
 }

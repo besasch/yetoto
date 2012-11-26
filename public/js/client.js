@@ -1,5 +1,5 @@
 function ApplicationViewModel(){
-	
+
     var self                     = this;
 
     self.todaysDate              = moment(); // Contains today's date
@@ -31,11 +31,11 @@ Y8a.    .a8P  Y8a     a8P  88           88     `8b       88     `8888   d8'     
 
 
     self.goToNewCalendar = function() {
-        
+
         self.calendarContainer(new Calendar({title: '', description: ''}));
-        self.redirectClickEvent('fileSelect', 'fileElem');
-        self.openModal('NewCalendarModal');
-    };
+            self.redirectClickEvent('fileSelect', 'fileElem');
+            self.openModal('NewCalendarModal');
+        };
 
     self.goToUpdateCalendar = function(chosenCalendar) {
 
@@ -66,7 +66,7 @@ Y8a.    .a8P  Y8a     a8P  88           88     `8b       88     `8888   d8'     
     self.goToTomorrow  = function() {
         self.shownDay(moment(self.shownDay()).add('days', 1));
     };
-    
+
     self.goToYesterday = function() {
         self.shownDay(moment(self.shownDay()).subtract('days', 1));
     };
@@ -117,7 +117,7 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
         //Image Handling
         var fileSelectUpdate = document.getElementById(fromId);
         var fileElemUpdate = document.getElementById(toId);
-         
+
 
         fileSelectUpdate.addEventListener("click", function (e) {
           if (fileElemUpdate) {
@@ -211,7 +211,7 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
         for (var i = 0; i < valueArray.length; i++) {
 
             if(valueArray[i]._id == eventObj._id){
-                
+
                 valueArray.slice(i, 1, value);
                 self.events()[key] = valueArray;
                 break;
@@ -224,7 +224,7 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
 
         var key         = moment(eventObj.startDate).format('DD.MM.YYYY');
         var eventsArray = self.events()[key];
-  
+
         eventsArray.remove(function(item) {
             return item._id ==  eventObj._id;
         });
@@ -236,7 +236,7 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
     self.removeCalendarFromFrontend = function(data, calendar){
         //Remove calendar also in Front End
         self.calendars.remove(calendar);
-        
+
         //Remove Events from deleted calendar from Front End
         var i = data.events.length;
         while(i--){
@@ -247,7 +247,7 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
     self.updateCalendarOnFrontend = function(updatedCalendarData){
         /*for (var i = 0; i < self.calendars().length; i++) {
             if(self.calendars()[i]._id == updatedCalendarData._id){
-                
+
                 self.calendars.splice(i, 1, new Calendar(updatedCalendarData, true));
                 break;
             }
@@ -315,7 +315,7 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
 
 
     self.deleteCalendar = function(calendar) {
-    
+
         $.ajax({
             url: '/data/delete/' + calendar._id,
             type: 'post',
@@ -328,7 +328,7 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
             }
         });
     };
-    
+
     self.updateEvent = function(){
         self.closeModals();
 
@@ -348,7 +348,7 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
 
     self.updateCalendar = function () {
         self.closeModals();
-        
+
         //Get type and data of uploaded image
         var chosenImage = document.getElementById('updateCalendarPhoto').src;
         var type = chosenImage.substring(chosenImage.indexOf('/') + 1, chosenImage.indexOf(';'));
@@ -373,7 +373,7 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
     };
 
     self.addCalendar = function() {
-        
+
         //Get type and data of uploaded image
         var chosenImage = document.getElementById('newCalendarPhoto').src;
         var type = chosenImage.substring(chosenImage.indexOf('/') + 1, chosenImage.indexOf(';'));
@@ -399,7 +399,7 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
     };
 
     self.addEvent = function() {
-        
+
         var newEvent = self.eventContainer();
 
         $.ajax({
@@ -492,7 +492,7 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
 
 
     self.loadData();
-    
+
 }
 
 
@@ -510,20 +510,20 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
 
 function Event(data, isHidden) {
     var self              = this;
-    
+
     self._id              = data._id;
     self.title            = ko.observable(data.title);
     self.content          = ko.observable(data.content);
-    
+
     self.startDate        = ko.observable(data.startDate);
     self.endDate          = ko.observable(data.endDate);
-    
+
     self.location         = ko.observable(data.location);
     self._calendar        = data._calendar;
     self.creationTime     = data.creationTime;
     self.modificationTime = data.modificationTime;
     self.owner            = data.owner;
-    
+
     // Computed value that returns the picture TODO: retrieve the picture from the calendars array
     self.picture          = ko.computed(function(){
         return self._calendar.picture;
@@ -583,17 +583,17 @@ function Event(data, isHidden) {
     self.isHidden         = ko.observable(isHidden);
 }
 
-	
+
 function Calendar(data, isOwner) {
 	var self = this;
-	
+
     self._id         = data._id;
     self.title       = ko.observable(data.title);
     self.picture     = ko.observable(data.picture);
     self.description = ko.observable(data.description);
     self.isOwner     = ko.observable(isOwner);
     self.isHidden    = ko.observable(false);
-    
+
 }
 
 
@@ -602,7 +602,7 @@ function handleImage(files, elementId) {
         var file = files[i];
 
         var imageType = /image.*/;
-         
+
         var img = document.getElementById(elementId);
         img.file = file;
 
