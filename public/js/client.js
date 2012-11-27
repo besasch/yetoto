@@ -129,7 +129,7 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
 
     self.enableDateAndTimePicker = function(){
         $('.init-timepicker').timepicker({ 'timeFormat': 'H:i' });
-        $('.init-datepicker').datepicker({ 'dateFormat': 'dd.mm.yy' });
+        $('.init-datepicker').datepicker({ 'format': 'dd.mm.yyyy' });
     };
 
 
@@ -171,6 +171,7 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
             mappedCalendars.push(new Calendar(data.subscriptions[j], false));
         }
         self.calendars(mappedCalendars);
+        self.enableTooltips();
     };
 
     self.clearEventsFromFrontend = function(){

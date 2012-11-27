@@ -68,9 +68,9 @@
                 </button>
             </a>
         </li>
-        <ol class="unstyled" data-bind="foreach: calendars" >
-            
-            <li class="dropdown" id="calendars" style= "float: left; margin-left: 5px;">
+        <ol id="calendars" class="unstyled" data-bind="foreach: calendars">
+
+            <li class="dropdown" style= "float: left; margin-left: 5px;">
                 <a href="#" class="dropdown-toggle thumbnail" data-toggle="dropdown">
                     <img data-bind="attr: { src: picture }" style="width: 70px; height: 70px;">
                 </a>
@@ -80,20 +80,20 @@
                     <li class="divider"></li>
                     <li data-bind="visible: !isHidden()"><a href="#" data-bind="click: $root.hideCalendar"><i class="icon-eye-close"></i> Hide</a></li>
                     <li data-bind="visible: isHidden()"><a href="#" data-bind="click: $root.unhideCalendar"><i class="icon-eye-open"></i> Show</a></li>
-                    <li class="divider"></li>                    
+                    <li class="divider"></li>
                     <li data-bind="visible: !isOwner()"><a href="#" data-bind="click: $root.unsubscribeCalendar"><i class="icon-minus"></i> Unsubscribe</a></li>
-                    <li data-bind="visible: isOwner()"><a href="#"  data-bind="click: $root.deleteCalendar"><i class="icon-minus"></i> Delete Calendar</a></li> 
+                    <li data-bind="visible: isOwner()"><a href="#"  data-bind="click: $root.deleteCalendar"><i class="icon-minus"></i> Delete Calendar</a></li>
                 </ul>
             </li>
         </ol>
-    </div>    
-    
+    </div>
+
     <!-- Day View Information -->
     <div id="dayview-information">
 
       <button class="btn pull-left" data-bind="click: goToYesterday"><i class="icon-circle-arrow-left"></i> </button>
       <button class="btn pull-right" data-bind="click: goToTomorrow"> <i class="icon-circle-arrow-right"></i></button>
-      
+
       <div class="date-controls">
         <h3 data-bind="text: shownDayFormatted"></h3>
       </div>
@@ -114,7 +114,7 @@
         </div>
       </div>
     </div>
-   
+
   </div>
 
   <!-- Modal Show Event -->
@@ -124,7 +124,7 @@
       <h3 data-bind="text: title"><!-- le title --></h3>
     </div>
     <div class="modal-body">
-      <p  data-bind="text: content"><!-- le content --></p> 
+      <p  data-bind="text: content"><!-- le content --></p>
     </div>
     <div class="modal-footer">
       <button class="btn pull-right" data-bind="click: $root.deleteEvent">Delete Event</button>
@@ -265,9 +265,9 @@
       <div class="control-group">
         <label class="control-label">Image</label>
         <div class="controls">
-          
+
           <a href="#" id="fileSelect">
-            <img src="/img/photo.jpg" id="newCalendarPhoto" class="pull-left" style="width: 70px; height: 70px; z-index:1080">            
+            <img src="/img/photo.jpg" id="newCalendarPhoto" class="pull-left" style="width: 70px; height: 70px; z-index:1080">
             <i class="icon-pencil" id="imageupload" width="14" height="14" style="background-color: white; opacity: 0.5; margin: 56px 0px 0px -14px; position: absolute; z-index: 1090;"></i>
           </a>
           <input type="file" id="fileElem" accept="image/*" style="display:none" onchange="handleImage(this.files, 'newCalendarPhoto')">
@@ -303,12 +303,12 @@
       <div class="control-group">
         <label class="control-label">Image</label>
         <div class="controls">
-          
+
           <a href="#" id="fileSelectUpdate">
             <img id="updateCalendarPhoto" data-bind="attr: { src: picture }" class="pull-left" style="width: 70px; height: 70px; z-index:1080">
             <i class="icon-pencil" width="14" height="14" style="background-color: white; opacity: 0.5; margin: 56px 0px 0px -14px; position: absolute; z-index: 1090;"></i>
           </a>
-          
+
           <input type="file" id="fileElemUpdate" accept="image/*" style="display:none" onchange="handleImage(this.files, 'updateCalendarPhoto')">
         </div>
       </div>
@@ -353,9 +353,9 @@
   <script src='js/libs/knockout-2.2.0.js'></script>
 
 
-  <!--<script src='js/libs/bootstrap-datepicker.js'></script>-->
+  <script src='js/libs/bootstrap-datepicker.js'></script>
   <script src='js/libs/jquery.timepicker.min.js'></script>
-  <script src="js/libs/jquery-ui-1.9.0.datepicker.js"></script>
+  <!--<script src="js/libs/jquery-ui-1.9.0.datepicker.js"></script>-->
 
   <script src="js/client.js"></script>
 
