@@ -5041,52 +5041,102 @@ span.time {
   position: absolute;
   z-index: 2000;
 }
-.ui-timepicker-list {
-  overflow-y: auto;
-  height: 150px;
-  width: 6.5em;
-  background: #fff;
-  border: 1px solid #ddd;
-  margin: 0;
+/*!
+ * Timepicker for Bootstrap
+ *
+ * Copyright 2012 Joris de Wit, Stefan Petre, Andrew Rowls
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ */
+.bootstrap-timepicker.dropdown-menu {
+  top: 0;
+  left: 0;
+  padding: 4px;
+  margin-top: 1px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  display: none;
+  min-width: 10px;
+  z-index: 99999;
+}
+.bootstrap-timepicker.dropdown-menu.open {
+  display: inline-block;
+}
+.bootstrap-timepicker.dropdown-menu:before {
+  content: '';
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #ccc;
+  border-bottom-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: -7px;
+  left: 6px;
+}
+.bootstrap-timepicker.dropdown-menu:after {
+  content: '';
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #ffffff;
+  position: absolute;
+  top: -6px;
+  left: 7px;
+}
+.bootstrap-timepicker.modal {
+  top: 30%;
+  margin-top: 0;
+  width: 200px;
+  margin-left: -100px;
+}
+.bootstrap-timepicker.modal .modal-content {
   padding: 0;
-  list-style: none;
-  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  outline: none;
-  z-index: 10001;
 }
-.ui-timepicker-list.ui-timepicker-with-duration {
-  width: 11em;
-}
-.ui-timepicker-duration {
-  margin-left: 5px;
-  color: #888;
-}
-.ui-timepicker-list:hover .ui-timepicker-duration {
-  color: #888;
-}
-.ui-timepicker-list li {
-  padding: 3px 0 3px 5px;
-  cursor: pointer;
-  white-space: nowrap;
-  color: #000;
-  list-style: none;
+.bootstrap-timepicker table {
+  width: 100%;
   margin: 0;
 }
-.ui-timepicker-list:hover .ui-timepicker-selected {
-  background: #fff;
-  color: #000;
+.bootstrap-timepicker table td {
+  text-align: center;
+  height: 30px;
+  margin: 0;
+  padding: 2px;
 }
-li.ui-timepicker-selected,
-.ui-timepicker-list li:hover,
-.ui-timepicker-list:hover .ui-timepicker-selected:hover {
-  background: #1980EC;
-  color: #fff;
+.bootstrap-timepicker table td span {
+  width: 100%;
 }
-li.ui-timepicker-selected .ui-timepicker-duration,
-.ui-timepicker-list li:hover .ui-timepicker-duration {
-  color: #ccc;
+.bootstrap-timepicker table td a {
+  border: 1px transparent solid;
+  width: 3em;
+  display: inline-block;
+  margin: 0;
+  padding: 8px 0;
+  outline: 0;
+  color: #333;
+}
+.bootstrap-timepicker table td a:hover {
+  text-decoration: none;
+  background-color: #eee;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border-color: #ddd;
+}
+.bootstrap-timepicker table td a i {
+  margin-top: 2px;
+}
+.bootstrap-timepicker table td input {
+  width: 25px;
+  margin: 0;
+  text-align: center;
+}
+.bootstrap-timepicker-component .add-on {
+  cursor: pointer;
+}
+.bootstrap-timepicker-component .add-on i {
+  display: block;
+  width: 16px;
+  height: 16px;
 }
 /*!
  * Datepicker for Bootstrap

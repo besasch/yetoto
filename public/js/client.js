@@ -56,7 +56,7 @@ Y8a.    .a8P  Y8a     a8P  88           88     `8b       88     `8888   d8'     
     self.goToNewEvent = function(calendars) {
 
         self.eventContainer(new Event({
-                title: '', content: '', startDate: moment(), endDate: moment(),
+                title: '', content: '', startDate: self.shownDay(), endDate: self.shownDay(),
                 location: '', _calendar: calendars._id})
             );
         self.enableDateAndTimePicker();
@@ -128,7 +128,7 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
     };
 
     self.enableDateAndTimePicker = function(){
-        $('.init-timepicker').timepicker({ 'timeFormat': 'H:i' });
+        $('.init-timepicker').timepicker({ 'showMeridian': false});
         $('.init-datepicker').datepicker({ 'format': 'dd.mm.yyyy' });
     };
 
@@ -171,7 +171,6 @@ Y8a.    .a8P    88      Y8a     a8P      88       Y8a.    .a8P  88           88
             mappedCalendars.push(new Calendar(data.subscriptions[j], false));
         }
         self.calendars(mappedCalendars);
-        self.enableTooltips();
     };
 
     self.clearEventsFromFrontend = function(){

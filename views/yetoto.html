@@ -166,20 +166,45 @@
           <input type="text" placeholder="What is going to happen..." data-bind="value: title">
         </div>
       </div>
-      <div class="control-group">
-        <label class="control-label">From</label>
-        <div class="controls">
-          <input type="text" placeholder="Starts at..." class="span2 init-timepicker" data-bind="value: startTime">
-          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: startDay" >
+
+      <div class="row">
+        <div class="control-group span3">
+          <label class="control-label">From</label>
+          <div class="controls">
+            <div class="input-append bootstrap-timepicker-component">
+              <input type="text" placeholder="Starts at..." class="timepicker-default input-small init-timepicker" data-bind="value: startTime">
+              <span class="add-on">
+                  <i class="icon-time"></i>
+              </span>
+            </div>
+            <div class="input-append date init-datepicker" data-bind="attr: { 'data-date': startDay }" >
+              <input type="text" placeholder="Le date" class="input-small" data-bind="value: startDay" >
+              <span class="add-on">
+                  <i class="icon-calendar"></i>
+              </span>
+            </div>
+
+          </div>
+        </div>
+        <div class="control-group span3">
+          <label class="control-label">Until</label>
+          <div class="controls">
+            <div class="input-append bootstrap-timepicker-component">
+              <input type="text" placeholder="Ends at..." class="timepicker-default input-small init-timepicker" data-bind="value: endTime">
+              <span class="add-on">
+                  <i class="icon-time"></i>
+              </span>
+            </div>
+              <div class="input-append date init-datepicker" data-bind="attr: { 'data-date': endDay }" >
+              <input type="text" placeholder="Le date" class="input-small" data-bind="value: endDay" >
+              <span class="add-on">
+                  <i class="icon-calendar"></i>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="control-group">
-        <label class="control-label">Until</label>
-        <div class="controls">
-          <input type="text" placeholder="Ends at..." class="span2 init-timepicker" data-bind="value: endTime">
-          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: endDay">
-        </div>
-      </div>
+
       <div class="control-group">
         <label class="control-label">Description</label>
         <div class="controls">
@@ -211,18 +236,40 @@
           <input type="text" placeholder="What is going to happen..." data-bind="value: title">
         </div>
       </div>
-      <div class="control-group">
-        <label class="control-label">From</label>
-        <div class="controls">
-          <input type="text" placeholder="Starts at..." class="span2 init-timepicker" data-bind="value: startTime">
-          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: startDay" >
+      <div class="row">
+        <div class="control-group span3">
+          <label class="control-label">From</label>
+          <div class="controls">
+            <div class="input-append bootstrap-timepicker-component">
+              <input type="text" placeholder="Starts at..." class="timepicker-default input-small init-timepicker" data-bind="value: startTime">
+              <span class="add-on">
+                  <i class="icon-time"></i>
+              </span>
+            </div>
+            <div class="input-append date init-datepicker" data-bind="attr: { 'data-date': startDay }" >
+              <input type="text" placeholder="Le date" class="input-small" data-bind="value: startDay" >
+              <span class="add-on">
+                  <i class="icon-calendar"></i>
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label">Until</label>
-        <div class="controls">
-          <input type="text" placeholder="Ends at..." class="span2 init-timepicker" data-bind="value: endTime">
-          <input type="text" placeholder="Le date" class="span2 init-datepicker" data-bind="value: endDay">
+        <div class="control-group span3">
+          <label class="control-label">Until</label>
+          <div class="controls">
+            <div class="input-append bootstrap-timepicker-component">
+              <input type="text" placeholder="Ends at..." class="timepicker-default input-small init-timepicker" data-bind="value: endTime">
+              <span class="add-on">
+                  <i class="icon-time"></i>
+              </span>
+            </div>
+              <div class="input-append date init-datepicker" data-bind="attr: { 'data-date': endDay }" >
+              <input type="text" placeholder="Le date" class="input-small" data-bind="value: endDay" >
+              <span class="add-on">
+                  <i class="icon-calendar"></i>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="control-group">
@@ -354,8 +401,7 @@
 
 
   <script src='js/libs/bootstrap-datepicker.js'></script>
-  <script src='js/libs/jquery.timepicker.min.js'></script>
-  <!--<script src="js/libs/jquery-ui-1.9.0.datepicker.js"></script>-->
+  <script src='js/libs/bootstrap-timepicker.js'></script>
 
   <script src="js/client.js"></script>
 
