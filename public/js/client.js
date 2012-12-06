@@ -35,7 +35,7 @@ Y8a.    .a8P  Y8a     a8P  88           88     `8b       88     `8888   d8'     
         self.calendarContainer(new Calendar({title: '', description: ''}));
             self.redirectClickEvent('fileSelect', 'fileElem');
             self.openModal('NewCalendarModal');
-        };
+    };
 
     self.goToUpdateCalendar = function(chosenCalendar) {
 
@@ -488,11 +488,7 @@ d8'          `8b  "Y8888P"  d8'          `8b  8P        */
 
         });
     };
-
-
-
     self.loadData();
-
 }
 
 
@@ -535,10 +531,10 @@ function Event(data, isHidden) {
             return moment(self.startDate()).format('DD.MM.YYYY');
         },
         write:  function(day) {
-            var parsedMoment = moment(day, 'DD.MM.YYYY');
-            self.startDate(moment(self.startDate()).year(parsedMoment.year()));
-            self.startDate(moment(self.startDate()).month(parsedMoment.month() +1));
-            self.startDate(moment(self.startDate()).date(parsedMoment.date()));
+            var d = moment(day, 'DD.MM.YYYY');
+            self.startDate(moment(self.startDate()).year(d.year()));
+            self.startDate(moment(self.startDate()).month(d.month()));
+            self.startDate(moment(self.startDate()).date(d.date()));
         },
         owner:  self
     });
@@ -550,7 +546,7 @@ function Event(data, isHidden) {
         write:  function(day) {
             var parsedMoment = moment(day, 'DD.MM.YYYY');
             self.endDate(moment(self.endDate()).year(parsedMoment.year()));
-            self.endDate(moment(self.endDate()).month(parsedMoment.month() +1));
+            self.endDate(moment(self.endDate()).month(parsedMoment.month()));
             self.endDate(moment(self.endDate()).date(parsedMoment.date()));
         },
         owner:  self
